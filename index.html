@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>アルト初動スキャナー</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16181d;--sub:#5b6270;--line:#e3e6eb;--up:#0f9d58;--down:#d93025;--accent:#2563eb;--warn:#b45309;--warnbg:#fff4e0;--good:#0f766e;--goodbg:#e2f5f1;--bad:#b91c1c;--badbg:#fde8e8;}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#181b21;--ink:#e8eaee;--sub:#9aa2b1;--line:#2a2f38;--up:#34c77b;--down:#f2685f;--accent:#6ea0ff;--warn:#f0b35a;--warnbg:#3a2b12;--good:#4fd1c0;--goodbg:#10302c;--bad:#f58c8c;--badbg:#3b1a1a;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0}
+h2{font-size:17px;margin:20px 0 8px}
+.meta{color:var(--sub);font-size:13px}
+.alert{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin:12px 0}
+.tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.tabs button,.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:999px;font-size:14px;cursor:pointer}
+.tabs button.on,.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.filters{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--sub);margin-bottom:10px;align-items:center}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rank{color:var(--sub);font-size:13px;width:26px}
+.sym{font-weight:700;font-size:17px}
+.sym a{color:inherit;text-decoration:none}
+.score{margin-left:auto;text-align:right}
+.score b{font-size:20px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;width:110px;margin-top:3px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:6px 12px;margin:8px 0;font-size:13px}
+.nums span{color:var(--sub)}
+.up{color:var(--up)}.down{color:var(--down)}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;margin:2px 4px 2px 0;background:var(--line);color:var(--ink)}
+.tag.good{background:var(--goodbg);color:var(--good)}
+.tag.bad{background:var(--badbg);color:var(--bad)}
+details{font-size:13px}
+summary{cursor:pointer;color:var(--accent)}
+ul{margin:6px 0 0;padding-left:20px}
+svg.sp{width:120px;height:32px}
+.help p,.help li{font-size:14px}
+.empty{color:var(--sub);padding:20px;text-align:center}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--sub);font-weight:600;vertical-align:bottom}
+@media (max-width:480px){table{font-size:12px}th,td{padding:5px 3px}.tw{padding:4px}}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
+.big{font-size:15px}
+input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>アルト初動スキャナー（Gate.io・短期版）</h1>
+  <div class="meta" id="meta">データ取得前</div>
+  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。過去90日の検証では、<b>どのシグナルもランダムに買った場合とほぼ同じ成績</b>でした（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
+  <div class="tabs">
+    <button data-t="top" class="on">シグナル</button>
+    <button data-t="watch">お気に入り</button>
+    <button data-t="bt">過去検証</button>
+    <button data-t="help">見方の説明</button>
+  </div>
+
+  <section id="p-top">
+    <div class="filters">
+      <button class="btn primary" id="scanBtn">最新データで再計算</button>
+      <label><input type="checkbox" id="fSig" checked> シグナル点灯中だけ</label>
+      <label><input type="checkbox" id="fThin" checked> 低流動性を隠す</label>
+      <label><input type="checkbox" id="fHot" checked> 高騰済みを隠す</label>
+    </div>
+    <div class="prog" id="prog" hidden><i></i></div>
+    <div class="meta" id="progTxt"></div>
+    <div id="list"></div>
+  </section>
+
+  <section id="p-watch" hidden>
+    <div class="card"><div class="meta">お気に入り銘柄（カンマ区切り。このブラウザに保存されます）</div>
+      <input type="text" id="wlInput"><div style="margin-top:8px"><button class="btn" id="wlSave">保存して再計算</button></div></div>
+    <div id="wlist"></div>
+  </section>
+
+  <section id="p-bt" hidden>
+    <h2>短期（1時間〜1週間）の検証結果</h2>
+    <div class="card big">
+      <p><b>方法：</b>Gate.io のUSDTペア404銘柄の1時間足（2026年6月28日〜9月26日の90日間）で、1時間ごとに「その時点までのデータだけ」でシグナルを判定。点灯した時の終値で買い、その後どうなったかを調べました。同じ銘柄の同じシグナルは24時間に1回だけ数えています（同じ急騰を何度も数えないため）。<b>手数料として往復0.2%を差し引いています。</b></p>
+      <p><b>結論：どのシグナルも「ランダムに買う」と大差なし。成績を決めていたのは相場全体の上げ下げでした。</b></p>
+    </div>
+
+    <h2>① 決めたルールで売買した場合</h2>
+    <p class="meta">ルール：買った後 +10% で利益確定、−5% で損切り、どちらにも届かなければ72時間後に売る。前半＝6/28〜8/12（横ばい相場）、後半＝8/12〜9/26（全面高の相場）。</p>
+    <div class="tw"><table>
+      <tr><th>シグナル</th><th>前半<br>平均損益</th><th>前半<br>勝率</th><th>後半<br>平均損益</th><th>後半<br>勝率</th></tr>
+      <tr><td>ランダムに買う（比較用）</td><td class="down">−0.4%</td><td>39.7%</td><td class="up">+0.6%</td><td>44.6%</td></tr>
+      <tr><td>A 1時間出来高急増</td><td class="down">−0.3%</td><td>38.4%</td><td class="up">+0.9%</td><td>46.5%</td></tr>
+      <tr><td>B 静かな買い集め</td><td class="down">−0.4%</td><td>35.2%</td><td class="up">+1.4%</td><td>46.9%</td></tr>
+      <tr><td>C 72時間高値ブレイク</td><td class="down">−0.8%</td><td>33.4%</td><td class="up">+1.0%</td><td>44.8%</td></tr>
+      <tr><td>A+C 同時</td><td class="down">−0.7%</td><td>34.2%</td><td class="up">+1.4%</td><td>48.6%</td></tr>
+      <tr><td>24hで+30%以上を追いかけ買い</td><td class="down">−0.1%</td><td>34.3%</td><td class="down">−0.3%</td><td>32.6%</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li>横ばいの前半は<b>全部マイナス</b>、全面高の後半は<b>全部プラス</b>。シグナルの差（最大+0.8%）より、相場の差（約1%）の方が大きい。</li>
+      <li>A・B・A+Cは後半だけ少し良いが、前半ではランダムと同じかやや悪い。<b>「いつでも効く」とは言えません。</b></li>
+      <li>勝率は40%前後。10回中6回は負ける前提で、勝った時の利益で取り返す形になります。</li>
+    </ul></div>
+
+    <h2>② 保有時間ごとの成績（決まった時間だけ持って売った場合）</h2>
+    <p class="meta">左が平均、右が中央値（真ん中の値）。平均がプラスでも中央値がマイナスなら「たまに大当たり、普段は小負け」という意味です。</p>
+    <div class="tw"><table>
+      <tr><th>シグナル</th><th>件数</th><th>1時間</th><th>4時間</th><th>1日</th><th>3日</th><th>1週間</th></tr>
+      <tr><td>ランダム</td><td>80,153</td><td>−0.2 / −0.2</td><td>−0.1 / −0.2</td><td>+0.2 / −0.2</td><td>+1.2 / −0.2</td><td>+2.8 / −0.2</td></tr>
+      <tr><td>A 1時間出来高急増</td><td>4,169</td><td>−0.2 / −0.2</td><td>0.0 / −0.2</td><td>+0.5 / −0.3</td><td>+1.5 / −0.3</td><td>+3.5 / −0.1</td></tr>
+      <tr><td>B 静かな買い集め</td><td>1,622</td><td>−0.2 / −0.2</td><td>−0.1 / −0.2</td><td>+0.4 / −0.5</td><td>+3.5 / −0.2</td><td>+4.8 / −0.7</td></tr>
+      <tr><td>1時間で+5%以上＋出来高急増</td><td>882</td><td>−0.1 / −0.8</td><td>0.0 / −1.1</td><td>+0.7 / −3.1</td><td>+4.2 / −3.7</td><td>+6.0 / −4.5</td></tr>
+      <tr><td>24hで+30%以上</td><td>451</td><td>+0.4 / −0.5</td><td>+1.3 / −0.9</td><td>+1.4 / −5.4</td><td>+5.1 / −7.5</td><td>+3.0 / −10.2</td></tr>
+      <tr><td>1時間で−8%以上の急落</td><td>639</td><td>+0.1 / +0.2</td><td>−0.1 / −0.1</td><td>−0.5 / −2.1</td><td>+1.3 / −2.5</td><td>−1.7 / −6.2</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>1時間〜4時間の保有はほぼ全部マイナス</b>。値動きより手数料（0.2%）の方が大きく、超短期では勝ちにくい。</li>
+      <li>急騰中の銘柄を追いかけると、1〜4時間は少しプラスですが、1日以上持つと<b>中央値 −5%〜−10%</b>。高値づかみの典型です。</li>
+      <li>急落直後の買い（リバウンド狙い）は1時間だけ +0.1%。手数料を引くとほぼゼロです。</li>
+      <li>3日〜1週間の平均がプラスなのは、この90日間が上げ相場だったためです（ランダムでも+2.8%）。</li>
+    </ul></div>
+
+    <h2>③ スクショの25銘柄だけで見ると</h2>
+    <div class="card big"><ul>
+      <li>A または B が点灯した時に買って72時間持つと：<b>277回、平均 +11.3%、中央値 +0.4%、勝率 52.7%</b>。</li>
+      <li>同じ25銘柄をランダムなタイミングで買うと：<b>平均 +6.4%、中央値 −0.5%、勝率 47.8%</b>。</li>
+      <li>シグナルの方が少し良いですが、<b>「後から上がったと分かっている銘柄」だけで調べた結果</b>なので、実際より良く見えています。</li>
+      <li>当たりは AKE（平均+55%）、LSK、NIL、TAKE など一部に集中。XTZ・ZETA・ZEST・BR・IOST・CELR は信号で買うと平均マイナスでした。</li>
+    </ul></div>
+    <p class="meta">参考：以前行った日足（14日保有・1年間）の検証でも、点数60以上で平均+3.9%・中央値−2.1%と、ほぼ同じ傾向でした。</p>
+
+    <h2>自分で検証し直す</h2>
+    <div class="card">
+      <p class="meta">約400銘柄×90日分の1時間足を取り直して、①の表を最新データで計算し直します。3〜4分かかります。</p>
+      <button class="btn primary" id="btBtn">最新データで再検証</button>
+      <div class="prog" id="btProg" hidden><i></i></div>
+      <div class="meta" id="btTxt"></div>
+      <div id="btOut"></div>
+    </div>
+  </section>
+
+  <section id="p-help" class="help" hidden>
+    <h2>3つのシグナル</h2>
+    <ul>
+      <li><b>A 1時間出来高急増</b>：直近1時間の売買金額が、その前24時間の平均の4倍以上。なのに価格はその1時間で0〜+5%、24時間で+15%未満（まだ大きく動いていない）。</li>
+      <li><b>B 静かな買い集め</b>：直近24時間の売買金額が、その前7日間の1日平均の3倍以上。なのに24時間の値動きは±10%以内。</li>
+      <li><b>C 72時間高値ブレイク</b>：過去72時間で一番高い値段を超え、出来高も平均の2倍以上。</li>
+    </ul>
+    <p>シグナルは直近6時間以内に点灯したものを表示し、「何時間前か」も出します。時間が経つほど「もう遅い」可能性が高くなります。</p>
+    <h2>点数と補足データ</h2>
+    <ul>
+      <li>点数 = A 30点 + B 25点 + C 20点 + 先物の補足点 − 危険な状態の減点。点数は並べ替えの目安です。</li>
+      <li><b>建玉（OI）</b>：先物で「まだ決済されていない取引の総額」。24時間で+20%以上増えて価格が横ばいなら +10点。</li>
+      <li><b>資金調達率（FR）</b>：先物で買いと売りのどちらが多いかを示す手数料。マイナス＝売りが多い。売りが多い状態で建玉が増えると、売った人の買い戻しで急騰する「踏み上げ」が起きやすいので +5点。+0.1%以上は買いが過熱なので −10点。</li>
+    </ul>
+    <h2>タグの意味</h2>
+    <ul>
+      <li><span class="tag bad">高騰済み</span> 24時間で+30%以上。検証では1日以上持つと中央値が大きくマイナス。</li>
+      <li><span class="tag bad">低流動性</span> 24時間の売買金額が50万USDT未満。少ないお金で値段を動かせるので、仕手（価格操作）に使われやすい。</li>
+      <li><span class="tag bad">過熱</span> 資金調達率が高い。</li>
+    </ul>
+    <h2>このページの仕組み</h2>
+    <p>開いたブラウザが直接 Gate.io の公開データ（ログイン不要）を取りに行って計算します。サーバーはありません。結果は10分間このブラウザに保存され、それより古いと自動で取り直します。</p>
+  </section>
+</div>
+
+<script>
+const API="https://api.gateio.ws/api/v4";
+const DEFAULT_WL=["PHA","SEI","NIL","BTW","EVAA","CYS","ONE","CELR","G","XTZ","ZAMA","BR","LSK","AKE","AIN","IOST","ZEC","ONDO","ZEST","TAKE","MUBARAK","COOKIE","USELESS","ZETA","PTB"];
+const EXCLUDE=new Set(["USDC","USDT","DAI","FDUSD","TUSD","USDE","USD1","PYUSD","BUSD","USDD","EUR","GUSD","XAUT","PAXG","WBTC","STETH"]);
+const MIN_QV=100000, THIN_QV=500000, FUT_TOP=60, SHOW_TOP=80, RPS=12, CACHE_MIN=10, LOOK=6;
+const $=s=>document.querySelector(s);
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let WL=store.get("wl")||DEFAULT_WL;
+
+// ---------- 通信（1秒あたりの回数を制限） ----------
+let lastT=0; const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function get(path){
+  for(let i=0;i<3;i++){
+    const wait=lastT+1000/RPS-Date.now(); lastT=Math.max(Date.now(),lastT+1000/RPS); if(wait>0) await sleep(wait);
+    try{ const r=await fetch(API+path); if(r.status===429){await sleep(2000);continue} if(!r.ok) return null; return await r.json(); }catch(e){ await sleep(1000); }
+  }
+  return null;
+}
+async function pool(items,fn,conc,onStep){ let i=0,done=0; const out=new Array(items.length);
+  await Promise.all(Array.from({length:conc},async()=>{ while(i<items.length){ const k=i++; out[k]=await fn(items[k]); done++; onStep&&onStep(done,items.length);} })); return out; }
+const conv=j=>(j||[]).map(c=>[+c[0],+c[1],+c[2],+c[3],+c[4],+c[5]]); // [時刻,出来高USDT,終値,高値,安値,始値]
+
+// ---------- シグナル判定（1時間足・確定した足 i の時点） ----------
+function feat(d,ps,i){
+  const qv=d[i][1],c=d[i][2]; const v24=ps[i+1]-ps[i-23]; const avg24=(ps[i]-ps[i-24])/24;
+  const vb=(ps[i-23]-ps[i-191])/7; let hi=0; for(let k=i-72;k<i;k++) if(d[k][3]>hi) hi=d[k][3];
+  return {c,v24,hvr:avg24>0?qv/avg24:0,dvr:vb>0?v24/vb:0,r1:c/d[i-1][2]-1,r24:c/d[i-24][2]-1,brk:c>hi};
+}
+const SIG={
+  A:x=>x.hvr>=4&&x.r1>0&&x.r1<0.05&&x.r24<0.15,
+  B:x=>x.dvr>=3&&Math.abs(x.r24)<0.10,
+  C:x=>x.brk&&x.hvr>=2,
+};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク"}, SIGPT={A:30,B:25,C:20};
+function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
+
+async function scan(){
+  const btn=$("#scanBtn"); btn.disabled=true; const prog=$("#prog"); prog.hidden=false;
+  const setP=(p,t)=>{prog.firstElementChild.style.width=(p*100).toFixed(0)+"%";$("#progTxt").textContent=t};
+  try{
+    setP(0.02,"銘柄一覧を取得中…");
+    const [tk,pairs]=await Promise.all([get("/spot/tickers"),get("/spot/currency_pairs")]);
+    if(!tk||!tk.length) throw new Error("Gate.io に接続できませんでした");
+    const info=Object.fromEntries((pairs||[]).map(p=>[p.id,p])); const wl=new Set(WL); const now=Date.now()/1000;
+    let uni=tk.filter(t=>t.currency_pair.endsWith("_USDT")).map(t=>{const b=t.currency_pair.slice(0,-5),inf=info[t.currency_pair]||{};
+      return {pair:t.currency_pair,base:b,last:+t.last,ch24:+t.change_percentage,qv24:+t.quote_volume,st:!!inf.st_tag,status:inf.trade_status,buy:+inf.buy_start||0}})
+      .filter(u=>!EXCLUDE.has(u.base)&&!/\d[LS]$/.test(u.base)&&(!u.status||u.status==="tradable")&&(u.qv24>=MIN_QV||wl.has(u.base)||u.base==="BTC"));
+    await pool(uni,async u=>{
+      const d=conv(await get(`/spot/candlesticks?currency_pair=${u.pair}&interval=1h&limit=240`));
+      const n=d.length-2; // 最後の足は未確定なので、その1本前までを使う
+      if(n<200){u.ok=false;return} u.ok=true; const ps=prefix(d);
+      u.sig={}; u.reasons=[]; u.tags=[]; u.score=0;
+      for(let k=0;k<LOOK;k++){ const i=n-k; const x=feat(d,ps,i);
+        for(const s in SIG){ if(u.sig[s]==null && SIG[s](x)) u.sig[s]={ago:k+1,hvr:x.hvr,dvr:x.dvr,price:x.c}; } }
+      const x=feat(d,ps,n); Object.assign(u,{hvr:+x.hvr.toFixed(1),dvr:+x.dvr.toFixed(1),r1:+(x.r1*100).toFixed(1),ch7:+((d[n][2]/d[n-168][2]-1)*100).toFixed(1),spark:d.slice(-72).map(v=>v[2])});
+      for(const s in u.sig){ const g=u.sig[s]; const decay=1-0.1*(g.ago-1); u.score+=SIGPT[s]*decay;
+        u.reasons.push(`${SIGNAME[s]}：${g.ago}時間前に点灯（${s==="B"?"24h出来高 普段の"+g.dvr.toFixed(1)+"倍":"1h出来高 平均の"+g.hvr.toFixed(1)+"倍"}／点灯時の価格 ${price(g.price)}・今 ${u.last>=g.price?"+":""}${((u.last/g.price-1)*100).toFixed(1)}%）`); }
+      if(u.ch24>=30){u.score-=20;u.tags.push("高騰済み")}
+      if(u.qv24<THIN_QV){u.score-=5;u.tags.push("低流動性")}
+      if(u.buy&&now-u.buy<14*86400) u.tags.push(`新規上場${Math.round((now-u.buy)/86400)}日`);
+      if(u.st){u.score-=20;u.tags.push("ST(警告銘柄)")}
+    },6,(k,n)=>setP(0.05+0.8*k/n,`1時間足を取得中 ${k}/${n}`));
+    uni=uni.filter(u=>u.ok); if(!uni.length) throw new Error("データが取得できませんでした");
+    uni.sort((a,b)=>b.score-a.score);
+    const ft=await get("/futures/usdt/tickers")||[]; const fut=Object.fromEntries(ft.filter(t=>t.contract.endsWith("_USDT")).map(t=>[t.contract.slice(0,-5),t]));
+    const fl=uni.filter((u,i)=>(i<FUT_TOP||wl.has(u.base))&&fut[u.base]);
+    await pool(fl,async u=>{
+      u.funding=+(+fut[u.base].funding_rate*100).toFixed(4);
+      const st=await get(`/futures/usdt/contract_stats?contract=${u.base}_USDT&interval=1h&limit=25`);
+      if(st&&st.length>=2){const o0=+st[0].open_interest_usd,o1=+st[st.length-1].open_interest_usd;
+        if(o0>0){const oc=(o1/o0-1)*100;u.oi_ch24=+oc.toFixed(1);
+          if(oc>=20&&Math.abs(u.ch24)<10){u.score+=10;u.reasons.push(`先物の建玉が24hで+${oc.toFixed(0)}%、価格は横ばい（+10）`)}
+          if(u.funding<0&&oc>=10){u.score+=5;u.reasons.push("売りが多い状態で建玉増加＝踏み上げの燃料（+5）")}}}
+      if(u.funding>=0.1){u.score-=10;u.tags.push("過熱");u.reasons.push(`資金調達率${u.funding.toFixed(3)}%＝買いが過熱（−10）`)}
+    },4,(k,n)=>setP(0.87+0.13*k/n,`先物データを取得中 ${k}/${n}`));
+    uni.forEach(u=>{u.score=Math.round(u.score);u.has_futures=!!fut[u.base]}); uni.sort((a,b)=>b.score-a.score);
+    const btc=uni.find(u=>u.base==="BTC");
+    const data={at:Date.now(),universe:uni.length,btc:btc?btc.ch24:null,top:uni.filter(u=>u.base!=="BTC").slice(0,SHOW_TOP),watch:uni.filter(u=>wl.has(u.base)),wl:WL.join(",")};
+    store.set("scan2",data); DATA=data; setP(1,""); prog.hidden=true;
+  }catch(e){ $("#progTxt").textContent="エラー: "+e.message+"（時間をおいて再計算してください）"; }
+  btn.disabled=false; render();
+}
+
+// ---------- 表示 ----------
+let DATA=store.get("scan2"), tab="top";
+function pct(v,d=1){if(v==null||isNaN(v))return"—";const c=v>0?"up":v<0?"down":"";return`<b class="${c}">${v>0?"+":""}${Number(v).toFixed(d)}%</b>`}
+function price(v){return !v?"—":v>=100?v.toLocaleString(undefined,{maximumFractionDigits:2}):v>=1?v.toFixed(4):String(Number(v.toPrecision(4)))}
+const usd=v=>v==null?"—":v>=1e9?(v/1e9).toFixed(2)+"B":v>=1e6?(v/1e6).toFixed(2)+"M":v>=1e3?(v/1e3).toFixed(0)+"K":v.toFixed(0);
+function spark(a){if(!a||a.length<2)return"";const mn=Math.min(...a),mx=Math.max(...a),w=120,h=32;
+  const pts=a.map((v,i)=>`${(i/(a.length-1)*w).toFixed(1)},${(h-2-(mx===mn?.5:(v-mn)/(mx-mn))*(h-4)).toFixed(1)}`).join(" ");
+  return`<svg class="sp" viewBox="0 0 ${w} ${h}" aria-label="72時間の値動き"><polyline fill="none" stroke="${a[a.length-1]>=a[0]?"var(--up)":"var(--down)"}" stroke-width="1.6" points="${pts}"/></svg>`}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function card(u,i){const w=Math.max(0,Math.min(100,u.score));
+  const sigTags=Object.keys(u.sig||{}).map(s=>`<span class="tag good">${SIGNAME[s]}・${u.sig[s].ago}h前</span>`).join("");
+  return`<div class="card"><div class="row"><span class="rank">${i+1}</span>
+   <span class="sym"><a href="https://www.gate.com/trade/${esc(u.pair)}" target="_blank" rel="noopener">${esc(u.base)}</a></span>${spark(u.spark)}
+   <div class="score"><b>${u.score}</b> 点<div class="bar"><i style="width:${w}%"></i></div></div></div>
+   <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
+   <div class="nums"><div><span>価格</span> ${price(u.last)}</div><div><span>1時間</span> ${pct(u.r1)}</div><div><span>24時間</span> ${pct(u.ch24)}</div><div><span>7日</span> ${pct(u.ch7)}</div>
+   <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
+   <div><span>建玉24h</span> ${u.oi_ch24!=null?pct(u.oi_ch24,0):(u.has_futures?"—":"先物なし")}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
+   ${u.reasons&&u.reasons.length?`<details><summary>詳細（${u.reasons.length}件）</summary><ul>${u.reasons.map(r=>`<li>${esc(r)}</li>`).join("")}</ul></details>`:""}</div>`}
+function render(){
+  ["top","watch","bt","help"].forEach(t=>$("#p-"+t).hidden=t!==tab);
+  if(DATA){const d=new Date(DATA.at);$("#meta").innerHTML=`更新: ${d.toLocaleString("ja-JP")} ／ 対象 ${DATA.universe} 銘柄 ／ BTC 24h ${pct(DATA.btc)}`+(DATA.btc!=null&&DATA.btc<=-5?' <b class="down">BTC急落中：アルトは巻き込まれやすい</b>':"")}
+  const empty=`<div class="empty">データがありません。「最新データで再計算」を押してください。</div>`;
+  if(tab==="top"){ if(!DATA){$("#list").innerHTML=empty;return}
+    let a=DATA.top; if($("#fSig").checked)a=a.filter(u=>Object.keys(u.sig||{}).length); if($("#fThin").checked)a=a.filter(u=>!u.tags.includes("低流動性")); if($("#fHot").checked)a=a.filter(u=>!u.tags.includes("高騰済み"));
+    $("#list").innerHTML=a.length?a.map(card).join(""):'<div class="empty">今はシグナルが出ている銘柄がありません</div>'}
+  if(tab==="watch"){ $("#wlInput").value=WL.join(","); if(!DATA){$("#wlist").innerHTML=empty;return}
+    const a=DATA.watch.slice().sort((x,y)=>y.score-x.score); const miss=WL.filter(b=>!a.some(u=>u.base===b));
+    $("#wlist").innerHTML=a.map(card).join("")+(miss.length?`<p class="meta">見つからない/データ不足: ${esc(miss.join(", "))}</p>`:"")}
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");tab=b.dataset.t;render()});
+["#fSig","#fThin","#fHot"].forEach(s=>$(s).onchange=render);
+$("#scanBtn").onclick=scan;
+$("#wlSave").onclick=()=>{WL=$("#wlInput").value.toUpperCase().split(/[,\s、]+/).map(s=>s.replace(/_?USDT$/,"")).filter(Boolean);store.set("wl",WL);document.querySelector('[data-t=top]').click();scan()};
+
+// ---------- 再検証（1時間足・90日・+10%/−5%/72時間ルール） ----------
+$("#btBtn").onclick=async()=>{
+  const b=$("#btBtn");b.disabled=true;const pg=$("#btProg");pg.hidden=false;const setP=(p,t)=>{pg.firstElementChild.style.width=(p*100)+"%";$("#btTxt").textContent=t};
+  try{const tk=await get("/spot/tickers"); if(!tk||!tk.length) throw new Error("接続できませんでした");
+    const bases=tk.filter(t=>t.currency_pair.endsWith("_USDT")&&+t.quote_volume>=MIN_QV).map(t=>t.currency_pair.slice(0,-5)).filter(x=>!EXCLUDE.has(x)&&!/\d[LS]$/.test(x)&&x!=="BTC");
+    const now=Math.floor(Date.now()/3600000)*3600; const ch=[[now-90*86400,now-60*86400-3600],[now-60*86400,now-30*86400-3600],[now-30*86400,now]];
+    const rules={R:x=>true,A:SIG.A,B:SIG.B,C:SIG.C,AC:x=>SIG.A(x)&&x.brk};
+    const acc={}; for(const k in rules) acc[k]=[];
+    await pool(bases,async base=>{ let d=[]; for(const [f,t] of ch) d=d.concat(conv(await get(`/spot/candlesticks?currency_pair=${base}_USDT&interval=1h&from=${f}&to=${t}`)));
+      const seen=new Set(); d=d.filter(x=>!seen.has(x[0])&&seen.add(x[0])).sort((x,y)=>x[0]-y[0]); const n=d.length-1; if(n<300) return;
+      const ps=prefix(d); const last={};
+      for(let i=192;i<n-73;i++){ const x=feat(d,ps,i); if(x.v24<MIN_QV||!(x.c>0)) continue;
+        for(const k in rules){ if(!rules[k](x)) continue; if(k==="R"){if(i%6)continue}else{if(last[k]!=null&&i-last[k]<24)continue;last[k]=i}
+          let r=null; for(let m=i+1;m<=i+72;m++){ if(d[m][4]<=x.c*0.95){r=-0.05;break} if(d[m][3]>=x.c*1.10){r=0.10;break} } if(r===null) r=d[i+72][2]/x.c-1;
+          acc[k].push(r-0.002); } }
+    },6,(k,n)=>setP(k/n,`1時間足を取得・計算中 ${k}/${n}`));
+    const nm={R:"ランダム（比較用）",A:SIGNAME.A,B:SIGNAME.B,C:SIGNAME.C,AC:"A+C 同時"}; const P=x=>(x*100).toFixed(1)+"%";
+    $("#btOut").innerHTML=`<div class="tw" style="margin-top:10px"><table><tr><th>シグナル</th><th>件数</th><th>平均損益</th><th>勝率</th></tr>`+
+      Object.keys(rules).map(k=>{const a=acc[k];if(!a.length)return"";const m=a.reduce((x,y)=>x+y,0)/a.length;return`<tr><td>${nm[k]}</td><td>${a.length.toLocaleString()}</td><td class="${m>0?"up":"down"}">${m>0?"+":""}${P(m)}</td><td>${P(a.filter(x=>x>0).length/a.length)}</td></tr>`}).join("")+`</table></div>`;
+    setP(1,`完了：${bases.length}銘柄（過去90日・+10%利確/−5%損切り/72時間・手数料0.2%込み）`);
+  }catch(e){$("#btTxt").textContent="エラー: "+e.message}
+  b.disabled=false;
+};
+
+render();
+if(!DATA||Date.now()-DATA.at>CACHE_MIN*60000||DATA.wl!==WL.join(",")) scan();
+</script>
+</body>
+</html>
