@@ -49,14 +49,15 @@ th{color:var(--sub);font-weight:600;vertical-align:bottom}
 @media (max-width:480px){table{font-size:12px}th,td{padding:5px 3px}.tw{padding:4px}}
 .tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
 .big{font-size:15px}
+.wrapt td{white-space:normal}
 input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:14px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v3）</h1>
   <div class="meta" id="meta">データ取得前</div>
-  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。過去90日の検証では、<b>どのシグナルもランダムに買った場合とほぼ同じ成績</b>でした（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
+  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。8か月分のデータで改良・検証しましたが、<b>いつでも儲かるシグナルは見つかりませんでした</b>。Dシグナルは上げ相場の時だけ大きく勝ち、それ以外はほぼトントン〜小負けです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
     <button data-t="top" class="on">シグナル</button>
     <button data-t="watch">お気に入り</button>
@@ -83,7 +84,32 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
-    <h2>短期（1時間〜1週間）の検証結果</h2>
+    <h2>改良版の検証（2026年1月29日〜9月26日・8か月）</h2>
+    <div class="card big">
+      <p><b>やったこと：</b>391銘柄の1時間足で、シグナル25種類 × 相場フィルター4種類 × 売り方7種類＝<b>644通り</b>を試しました。「学習期間（1/29〜6/22）」で一番良いものを選び、選ぶのに使っていない「検証期間（6/22〜9/26）」で本当に効くかを確かめました。手数料とスリッページ（表示価格とのズレ）で1往復0.3%を引き、買いはシグナルの次の1時間足の始値で行っています。</p>
+      <p><b>結論：学習期間で良かった組み合わせが、検証期間でも良い、という関係はほぼゼロ（相関 −0.01）。</b>つまり「過去に効いた」は「次も効く」を意味しませんでした。</p>
+    </div>
+    <p class="meta">いちばん安定していた組み合わせ（＝下の「D」シグナル）：1週間の最高値を更新＋24時間出来高が普段の2.5倍以上＋24時間で+20%未満。売り方は「高値から7%下がったら売る（最長72時間）」。</p>
+    <div class="tw"><table>
+      <tr><th>月</th><th>回数</th><th>1回の<br>平均損益</th><th>勝率</th><th>ランダム<br>買い</th></tr>
+      <tr><td>2月</td><td>32</td><td class="up">+0.1%</td><td>31%</td><td>+0.5%</td></tr>
+      <tr><td>3月</td><td>68</td><td class="down">−0.2%</td><td>37%</td><td>−0.2%</td></tr>
+      <tr><td>4月</td><td>79</td><td>0.0%</td><td>38%</td><td>+0.6%</td></tr>
+      <tr><td>5月</td><td>122</td><td class="up">+1.5%</td><td>42%</td><td>−0.1%</td></tr>
+      <tr><td>6月</td><td>50</td><td class="down">−2.3%</td><td>24%</td><td>−0.7%</td></tr>
+      <tr><td>7月</td><td>54</td><td class="down">−0.7%</td><td>41%</td><td>−0.4%</td></tr>
+      <tr><td>8月（全面高）</td><td>139</td><td class="up">+5.1%</td><td>58%</td><td>+0.6%</td></tr>
+      <tr><td>9月</td><td>99</td><td class="down">−0.2%</td><td>37%</td><td>+1.0%</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li>全体では1回平均 +1.1%ですが、<b>上位5%の大当たりを除くと −0.1%</b>。儲けはほぼ8月の上げ相場の数十回だけです。</li>
+      <li>同じ日に出たシグナルをまとめて数え直すと、統計的には「偶然と区別できない」レベル（t値 −0.6）でした。</li>
+      <li>5銘柄まで同時に持つルールで8か月運用すると <b>+4%、途中の最大下落 −35%</b>。同じ期間、BTCを持っていただけなら +23%でした。</li>
+      <li>「BTCが上昇トレンドの時だけ」「多くの銘柄が高値更新している時だけ」などの相場フィルターも試しましたが、上げ相場を事前に見分けることはできませんでした。</li>
+      <li>日足・順位づけ（強い銘柄を買う／弱い銘柄を買う）・相場全体の上げ下げに合わせて出入りする方法も試しましたが、どれも学習期間と検証期間で結果が逆転しました。</li>
+    </ul></div>
+
+    <h2>以前の検証（2026年6月28日〜9月26日・90日）</h2>
     <div class="card big">
       <p><b>方法：</b>Gate.io のUSDTペア404銘柄の1時間足（2026年6月28日〜9月26日の90日間）で、1時間ごとに「その時点までのデータだけ」でシグナルを判定。点灯した時の終値で買い、その後どうなったかを調べました。同じ銘柄の同じシグナルは24時間に1回だけ数えています（同じ急騰を何度も数えないため）。<b>手数料として往復0.2%を差し引いています。</b></p>
       <p><b>結論：どのシグナルも「ランダムに買う」と大差なし。成績を決めていたのは相場全体の上げ下げでした。</b></p>
@@ -93,12 +119,12 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
     <p class="meta">ルール：買った後 +10% で利益確定、−5% で損切り、どちらにも届かなければ72時間後に売る。前半＝6/28〜8/12（横ばい相場）、後半＝8/12〜9/26（全面高の相場）。</p>
     <div class="tw"><table>
       <tr><th>シグナル</th><th>前半<br>平均損益</th><th>前半<br>勝率</th><th>後半<br>平均損益</th><th>後半<br>勝率</th></tr>
-      <tr><td>ランダムに買う（比較用）</td><td class="down">−0.4%</td><td>39.7%</td><td class="up">+0.6%</td><td>44.6%</td></tr>
+      <tr><td>ランダム</td><td class="down">−0.4%</td><td>39.7%</td><td class="up">+0.6%</td><td>44.6%</td></tr>
       <tr><td>A 1時間出来高急増</td><td class="down">−0.3%</td><td>38.4%</td><td class="up">+0.9%</td><td>46.5%</td></tr>
       <tr><td>B 静かな買い集め</td><td class="down">−0.4%</td><td>35.2%</td><td class="up">+1.4%</td><td>46.9%</td></tr>
       <tr><td>C 72時間高値ブレイク</td><td class="down">−0.8%</td><td>33.4%</td><td class="up">+1.0%</td><td>44.8%</td></tr>
       <tr><td>A+C 同時</td><td class="down">−0.7%</td><td>34.2%</td><td class="up">+1.4%</td><td>48.6%</td></tr>
-      <tr><td>24hで+30%以上を追いかけ買い</td><td class="down">−0.1%</td><td>34.3%</td><td class="down">−0.3%</td><td>32.6%</td></tr>
+      <tr><td>24h+30%追いかけ</td><td class="down">−0.1%</td><td>34.3%</td><td class="down">−0.3%</td><td>32.6%</td></tr>
     </table></div>
     <div class="card" style="margin-top:10px"><ul>
       <li>横ばいの前半は<b>全部マイナス</b>、全面高の後半は<b>全部プラス</b>。シグナルの差（最大+0.8%）より、相場の差（約1%）の方が大きい。</li>
@@ -108,8 +134,8 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 
     <h2>② 保有時間ごとの成績（決まった時間だけ持って売った場合）</h2>
     <p class="meta">左が平均、右が中央値（真ん中の値）。平均がプラスでも中央値がマイナスなら「たまに大当たり、普段は小負け」という意味です。</p>
-    <div class="tw"><table>
-      <tr><th>シグナル</th><th>件数</th><th>1時間</th><th>4時間</th><th>1日</th><th>3日</th><th>1週間</th></tr>
+    <div class="tw"><table class="wrapt">
+      <tr class="wr"><th>シグナル</th><th>件数</th><th>1時間</th><th>4時間</th><th>1日</th><th>3日</th><th>1週間</th></tr>
       <tr><td>ランダム</td><td>80,153</td><td>−0.2 / −0.2</td><td>−0.1 / −0.2</td><td>+0.2 / −0.2</td><td>+1.2 / −0.2</td><td>+2.8 / −0.2</td></tr>
       <tr><td>A 1時間出来高急増</td><td>4,169</td><td>−0.2 / −0.2</td><td>0.0 / −0.2</td><td>+0.5 / −0.3</td><td>+1.5 / −0.3</td><td>+3.5 / −0.1</td></tr>
       <tr><td>B 静かな買い集め</td><td>1,622</td><td>−0.2 / −0.2</td><td>−0.1 / −0.2</td><td>+0.4 / −0.5</td><td>+3.5 / −0.2</td><td>+4.8 / −0.7</td></tr>
@@ -135,7 +161,7 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 
     <h2>自分で検証し直す</h2>
     <div class="card">
-      <p class="meta">約400銘柄×90日分の1時間足を取り直して、①の表を最新データで計算し直します。3〜4分かかります。</p>
+      <p class="meta">約400銘柄×90日分の1時間足を取り直して、各シグナルの成績を最新データで計算し直します（売り方は「高値から7%下落で売る・最長72時間」）。3〜4分かかります。</p>
       <button class="btn primary" id="btBtn">最新データで再検証</button>
       <div class="prog" id="btProg" hidden><i></i></div>
       <div class="meta" id="btTxt"></div>
@@ -144,16 +170,22 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-help" class="help" hidden>
-    <h2>3つのシグナル</h2>
+    <h2>4つのシグナル</h2>
     <ul>
       <li><b>A 1時間出来高急増</b>：直近1時間の売買金額が、その前24時間の平均の4倍以上。なのに価格はその1時間で0〜+5%、24時間で+15%未満（まだ大きく動いていない）。</li>
       <li><b>B 静かな買い集め</b>：直近24時間の売買金額が、その前7日間の1日平均の3倍以上。なのに24時間の値動きは±10%以内。</li>
       <li><b>C 72時間高値ブレイク</b>：過去72時間で一番高い値段を超え、出来高も平均の2倍以上。</li>
+      <li><b>D 週高値ブレイク＋出来高（改良版）</b>：過去1週間（168時間）の最高値を超え、24時間の出来高が普段の2.5倍以上、24時間の上昇は+20%未満。8か月の検証でいちばん安定していたもの。ただし勝てたのはほぼ上げ相場の時だけ。</li>
     </ul>
-    <p>シグナルは直近6時間以内に点灯したものを表示し、「何時間前か」も出します。時間が経つほど「もう遅い」可能性が高くなります。</p>
+    <h2>検証で一番マシだった売り方</h2>
+    <ul>
+      <li><b>買った後の最高値から7%下がったら売る（トレーリングストップ）、最長72時間</b>。固定の利益確定（+10%で売る等）より、上げ相場で利益を伸ばせる分だけ成績が良かった。</li>
+      <li>勝率は40%前後。小さく負けて、たまに大きく勝つ形になる。</li>
+    </ul>
+    <p>点数 = D 35点 + A 20点 + B 20点 + C 15点（検証で比較的マシだったDを重く）。シグナルは直近6時間以内に点灯したものを表示し、「何時間前か」も出します。時間が経つほど「もう遅い」可能性が高くなります。</p>
     <h2>点数と補足データ</h2>
     <ul>
-      <li>点数 = A 30点 + B 25点 + C 20点 + 先物の補足点 − 危険な状態の減点。点数は並べ替えの目安です。</li>
+      <li>点数は並べ替えの目安です。先物の補足点・危険な状態の減点も加わります。</li>
       <li><b>建玉（OI）</b>：先物で「まだ決済されていない取引の総額」。24時間で+20%以上増えて価格が横ばいなら +10点。</li>
       <li><b>資金調達率（FR）</b>：先物で買いと売りのどちらが多いかを示す手数料。マイナス＝売りが多い。売りが多い状態で建玉が増えると、売った人の買い戻しで急騰する「踏み上げ」が起きやすいので +5点。+0.1%以上は買いが過熱なので −10点。</li>
     </ul>
@@ -194,14 +226,16 @@ const conv=j=>(j||[]).map(c=>[+c[0],+c[1],+c[2],+c[3],+c[4],+c[5]]); // [時刻,
 function feat(d,ps,i){
   const qv=d[i][1],c=d[i][2]; const v24=ps[i+1]-ps[i-23]; const avg24=(ps[i]-ps[i-24])/24;
   const vb=(ps[i-23]-ps[i-191])/7; let hi=0; for(let k=i-72;k<i;k++) if(d[k][3]>hi) hi=d[k][3];
-  return {c,v24,hvr:avg24>0?qv/avg24:0,dvr:vb>0?v24/vb:0,r1:c/d[i-1][2]-1,r24:c/d[i-24][2]-1,brk:c>hi};
+  let hi7=0; for(let k=i-168;k<i;k++) if(d[k][3]>hi7) hi7=d[k][3];
+  return {c,v24,hvr:avg24>0?qv/avg24:0,dvr:vb>0?v24/vb:0,r1:c/d[i-1][2]-1,r24:c/d[i-24][2]-1,brk:c>hi,brk168:c>hi7};
 }
 const SIG={
   A:x=>x.hvr>=4&&x.r1>0&&x.r1<0.05&&x.r24<0.15,
   B:x=>x.dvr>=3&&Math.abs(x.r24)<0.10,
   C:x=>x.brk&&x.hvr>=2,
+  D:x=>x.brk168&&x.dvr>=2.5&&x.r24<0.2,
 };
-const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク"}, SIGPT={A:30,B:25,C:20};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高"}, SIGPT={A:20,B:20,C:15,D:35};
 function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
 
 async function scan(){
@@ -292,20 +326,20 @@ $("#btBtn").onclick=async()=>{
   try{const tk=await get("/spot/tickers"); if(!tk||!tk.length) throw new Error("接続できませんでした");
     const bases=tk.filter(t=>t.currency_pair.endsWith("_USDT")&&+t.quote_volume>=MIN_QV).map(t=>t.currency_pair.slice(0,-5)).filter(x=>!EXCLUDE.has(x)&&!/\d[LS]$/.test(x)&&x!=="BTC");
     const now=Math.floor(Date.now()/3600000)*3600; const ch=[[now-90*86400,now-60*86400-3600],[now-60*86400,now-30*86400-3600],[now-30*86400,now]];
-    const rules={R:x=>true,A:SIG.A,B:SIG.B,C:SIG.C,AC:x=>SIG.A(x)&&x.brk};
+    const rules={R:x=>true,A:SIG.A,B:SIG.B,C:SIG.C,D:SIG.D};
     const acc={}; for(const k in rules) acc[k]=[];
     await pool(bases,async base=>{ let d=[]; for(const [f,t] of ch) d=d.concat(conv(await get(`/spot/candlesticks?currency_pair=${base}_USDT&interval=1h&from=${f}&to=${t}`)));
       const seen=new Set(); d=d.filter(x=>!seen.has(x[0])&&seen.add(x[0])).sort((x,y)=>x[0]-y[0]); const n=d.length-1; if(n<300) return;
       const ps=prefix(d); const last={};
       for(let i=192;i<n-73;i++){ const x=feat(d,ps,i); if(x.v24<MIN_QV||!(x.c>0)) continue;
         for(const k in rules){ if(!rules[k](x)) continue; if(k==="R"){if(i%6)continue}else{if(last[k]!=null&&i-last[k]<24)continue;last[k]=i}
-          let r=null; for(let m=i+1;m<=i+72;m++){ if(d[m][4]<=x.c*0.95){r=-0.05;break} if(d[m][3]>=x.c*1.10){r=0.10;break} } if(r===null) r=d[i+72][2]/x.c-1;
-          acc[k].push(r-0.002); } }
+          const e0=d[i+1][5]; let pk=e0, r=null; for(let m=i+1;m<=i+72;m++){ if(m>i+1&&d[m][4]<=pk*0.93){r=pk*0.93/e0-1;break} pk=Math.max(pk,d[m][3]); } if(r===null) r=d[i+72][2]/e0-1;
+          acc[k].push(r-0.003); } }
     },6,(k,n)=>setP(k/n,`1時間足を取得・計算中 ${k}/${n}`));
-    const nm={R:"ランダム（比較用）",A:SIGNAME.A,B:SIGNAME.B,C:SIGNAME.C,AC:"A+C 同時"}; const P=x=>(x*100).toFixed(1)+"%";
+    const nm={R:"ランダム（比較用）",A:SIGNAME.A,B:SIGNAME.B,C:SIGNAME.C,D:SIGNAME.D}; const P=x=>(x*100).toFixed(1)+"%";
     $("#btOut").innerHTML=`<div class="tw" style="margin-top:10px"><table><tr><th>シグナル</th><th>件数</th><th>平均損益</th><th>勝率</th></tr>`+
       Object.keys(rules).map(k=>{const a=acc[k];if(!a.length)return"";const m=a.reduce((x,y)=>x+y,0)/a.length;return`<tr><td>${nm[k]}</td><td>${a.length.toLocaleString()}</td><td class="${m>0?"up":"down"}">${m>0?"+":""}${P(m)}</td><td>${P(a.filter(x=>x>0).length/a.length)}</td></tr>`}).join("")+`</table></div>`;
-    setP(1,`完了：${bases.length}銘柄（過去90日・+10%利確/−5%損切り/72時間・手数料0.2%込み）`);
+    setP(1,`完了：${bases.length}銘柄（過去90日・高値から7%下落で売り/最長72時間・手数料等0.3%込み）`);
   }catch(e){$("#btTxt").textContent="エラー: "+e.message}
   b.disabled=false;
 };
