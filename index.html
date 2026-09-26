@@ -55,9 +55,9 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版 v3）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v4）</h1>
   <div class="meta" id="meta">データ取得前</div>
-  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。8か月分のデータで改良・検証しましたが、<b>いつでも儲かるシグナルは見つかりませんでした</b>。Dシグナルは上げ相場の時だけ大きく勝ち、それ以外はほぼトントン〜小負けです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
+  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。先物データ（建玉・清算・資金調達率）とオンチェーンデータも加えて検証しました。新しい<b>Eシグナル（落ち着き銘柄・1週間保有）</b>は学習・検証の両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
     <button data-t="top" class="on">シグナル</button>
     <button data-t="watch">お気に入り</button>
@@ -84,6 +84,58 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
+    <h2>先物・オンチェーンを追加した検証（2026年4月1日〜9月26日）</h2>
+    <div class="card big">
+      <p><b>追加したデータ：</b>①Gate.io先物の1時間ごとの <b>建玉</b>（まだ決済されていない先物の総額）・<b>清算額</b>（証拠金不足で強制決済された額）・<b>資金調達率</b>・<b>ロング/ショート比率</b>（236銘柄）。②DefiLlama の<b>オンチェーンデータ</b>：プロトコルに預けられた資産額（TVL）・手数料収入、チェーンごとのTVLとステーブルコイン残高（約90銘柄）。</p>
+      <p><b>方法：</b>前半（4/1〜7/17）を学習期間、後半（7/17〜9/26）を検証期間にしました。まず各データが「その後の値動き」とどれだけ関係するかを<b>IC</b>で調べ、関係がありそうなものからシグナルを作りました。</p>
+    </div>
+    <p class="meta">IC＝各時点で銘柄をそのデータの大きい順に並べた時、72時間後（オンチェーンは1週間後）の値上がり順とどれだけ一致するか。+1で完全一致、0で無関係、マイナスは「大きいほど後で弱い」。t値の絶対値が2を超えると「偶然とは言いにくい」目安です。</p>
+    <div class="tw"><table class="wrapt">
+      <tr><th>データ</th><th>学習期間<br>IC（t値）</th><th>検証期間<br>IC（t値）</th><th>判定</th></tr>
+      <tr><td>24h清算額（ロング）</td><td>−0.10（−3.7）</td><td>−0.12（−4.3）</td><td>効く（逆向き）</td></tr>
+      <tr><td>24h清算額（ショート）</td><td>−0.09（−3.1）</td><td>−0.10（−3.1）</td><td>効く（逆向き）</td></tr>
+      <tr><td>1週間の値動き</td><td>−0.07（−2.4）</td><td>−0.08（−2.2）</td><td>効く（逆向き）</td></tr>
+      <tr><td>建玉の3日変化</td><td>−0.05（−2.0）</td><td>−0.05（−1.3）</td><td>弱く効く（逆向き）</td></tr>
+      <tr><td>資金調達率（3日平均）</td><td>+0.01（0.2）</td><td>+0.03（0.8）</td><td>効かない</td></tr>
+      <tr><td>ロング/ショート口座比</td><td>−0.01（−0.3）</td><td>0.00（−0.1）</td><td>効かない</td></tr>
+      <tr><td>TVLの1週間変化</td><td>+0.03（0.5）</td><td>+0.06（0.8）</td><td>効かない</td></tr>
+      <tr><td>手数料収入の増加</td><td>+0.02（0.3）</td><td>+0.10（1.4）</td><td>効かない</td></tr>
+      <tr><td>チェーンのステーブル流入</td><td>+0.07（1.0）</td><td>−0.03（−0.4）</td><td>効かない</td></tr>
+      <tr><td>チェーンTVLの1週間変化</td><td>−0.06（−1.1）</td><td>−0.05（−0.8）</td><td>効かない</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li>はっきり効いたのは<b>「過熱のサイン」が逆向きに効く</b>ことでした。清算が多い・建玉（レバレッジ）が増えた・1週間で上がった銘柄は、その後<b>弱くなりやすい</b>。</li>
+      <li>資金調達率やロング/ショート比、オンチェーンデータ（TVL・手数料・ステーブル流入）は、学習と検証で向きが一定せず<b>予測には使えません</b>でした。</li>
+    </ul></div>
+
+    <h2>新シグナルの成績（1週間保有・1回あたりの平均損益・手数料等0.3%込み）</h2>
+    <div class="tw"><table class="wrapt">
+      <tr><th>シグナル</th><th>学習期間</th><th>検証期間</th></tr>
+      <tr><td>ランダム（先物のある銘柄）</td><td>+0.7%</td><td>+4.5%</td></tr>
+      <tr><td><b>E 落ち着き</b>（清算ほぼゼロ・建玉3日で−5%以上・1週間下落）</td><td class="up"><b>+3.4%</b></td><td class="up"><b>+6.5%</b></td></tr>
+      <tr><td>現物主導の買い集め（出来高2倍・建玉減・価格横ばい）</td><td class="up">+2.6%</td><td class="up">+7.3%</td></tr>
+      <tr><td>踏み上げ準備（資金調達率マイナス・建玉増）</td><td class="down">−1.5%</td><td>+8.9%</td></tr>
+      <tr><td>資金調達率マイナス＋上昇トレンド</td><td class="down">−5.0%</td><td>+7.0%</td></tr>
+      <tr><td>TVL急増・価格据え置き</td><td>+1.3%</td><td class="down">−3.4%</td></tr>
+      <tr><td>手数料収入の急増</td><td>+1.0%</td><td>+0.9%</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>E 落ち着き</b>は、条件の数字を36通りに変えても、30通りで学習・検証の<b>両方</b>でランダムを上回りました（数字を少し変えると崩れる「たまたま」ではない）。</li>
+      <li>E：781回、平均 +4.7%、中央値 +0.9%、勝率 54%。<b>上位5%の大当たりを除いても +0.1%</b>（ランダムは −2.8%）で、負けが少ないのが特徴です。</li>
+      <li>10銘柄に分けて持つルールだと6か月で <b>+82%（途中の最大下落 −13%）</b>。ランダムに10銘柄なら +49%（−29%）、BTC保有は +16%。</li>
+      <li><b>ただし</b>、同じ時期の市場平均との差を「同じ日の取引はまとめて」数え直すと t値 0.8 で、<b>統計的にはまだ偶然の可能性が残ります</b>。期間も6か月だけです。</li>
+      <li>「踏み上げ準備」「資金調達率マイナス」は、上げ相場だった検証期間だけ良く、学習期間はマイナス。相場次第で、信用できません。</li>
+    </ul></div>
+    <div class="tw" style="margin-top:10px"><table>
+      <tr><th>E の月別</th><th>回数</th><th>平均</th><th>勝率</th><th>市場比</th></tr>
+      <tr><td>4月</td><td>107</td><td class="up">+2.6%</td><td>56%</td><td class="down">−0.8%</td></tr>
+      <tr><td>5月</td><td>151</td><td class="up">+0.9%</td><td>41%</td><td class="up">+1.3%</td></tr>
+      <tr><td>6月</td><td>158</td><td class="up">+1.9%</td><td>58%</td><td class="up">+0.2%</td></tr>
+      <tr><td>7月</td><td>148</td><td class="up">+7.7%</td><td>45%</td><td class="up">+7.5%</td></tr>
+      <tr><td>8月</td><td>121</td><td class="up">+7.7%</td><td>65%</td><td class="up">+3.9%</td></tr>
+      <tr><td>9月</td><td>96</td><td class="up">+8.7%</td><td>69%</td><td class="down">−1.8%</td></tr>
+    </table></div>
+
     <h2>改良版の検証（2026年1月29日〜9月26日・8か月）</h2>
     <div class="card big">
       <p><b>やったこと：</b>391銘柄の1時間足で、シグナル25種類 × 相場フィルター4種類 × 売り方7種類＝<b>644通り</b>を試しました。「学習期間（1/29〜6/22）」で一番良いものを選び、選ぶのに使っていない「検証期間（6/22〜9/26）」で本当に効くかを確かめました。手数料とスリッページ（表示価格とのズレ）で1往復0.3%を引き、買いはシグナルの次の1時間足の始値で行っています。</p>
@@ -170,11 +222,12 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-help" class="help" hidden>
-    <h2>4つのシグナル</h2>
+    <h2>5つのシグナル</h2>
     <ul>
       <li><b>A 1時間出来高急増</b>：直近1時間の売買金額が、その前24時間の平均の4倍以上。なのに価格はその1時間で0〜+5%、24時間で+15%未満（まだ大きく動いていない）。</li>
       <li><b>B 静かな買い集め</b>：直近24時間の売買金額が、その前7日間の1日平均の3倍以上。なのに24時間の値動きは±10%以内。</li>
       <li><b>C 72時間高値ブレイク</b>：過去72時間で一番高い値段を超え、出来高も平均の2倍以上。</li>
+      <li><b>E 落ち着き（1週間保有向け・一番おすすめ度が高い）</b>：先物がある銘柄で、①24時間の清算額が建玉の0.1%未満（強制決済がほぼない）②建玉が3日で5%以上減った（レバレッジが抜けた）③価格が1週間で下がっている。過熱が冷めた銘柄を買い、1週間持つ。4〜9月の検証で学習・検証の両期間ともランダムより良かった唯一のシグナル。10銘柄程度に分けて買う前提。</li>
       <li><b>D 週高値ブレイク＋出来高（改良版）</b>：過去1週間（168時間）の最高値を超え、24時間の出来高が普段の2.5倍以上、24時間の上昇は+20%未満。8か月の検証でいちばん安定していたもの。ただし勝てたのはほぼ上げ相場の時だけ。</li>
     </ul>
     <h2>検証で一番マシだった売り方</h2>
@@ -182,12 +235,13 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
       <li><b>買った後の最高値から7%下がったら売る（トレーリングストップ）、最長72時間</b>。固定の利益確定（+10%で売る等）より、上げ相場で利益を伸ばせる分だけ成績が良かった。</li>
       <li>勝率は40%前後。小さく負けて、たまに大きく勝つ形になる。</li>
     </ul>
-    <p>点数 = D 35点 + A 20点 + B 20点 + C 15点（検証で比較的マシだったDを重く）。シグナルは直近6時間以内に点灯したものを表示し、「何時間前か」も出します。時間が経つほど「もう遅い」可能性が高くなります。</p>
+    <p>点数 = E 40点 + D 25点 + A 15点 + B 15点 + C 10点（検証結果の良い順に重く）。Eは状態が続く限り「点灯中」と表示。シグナルは直近6時間以内に点灯したものを表示し、「何時間前か」も出します。時間が経つほど「もう遅い」可能性が高くなります。</p>
     <h2>点数と補足データ</h2>
     <ul>
       <li>点数は並べ替えの目安です。先物の補足点・危険な状態の減点も加わります。</li>
-      <li><b>建玉（OI）</b>：先物で「まだ決済されていない取引の総額」。24時間で+20%以上増えて価格が横ばいなら +10点。</li>
-      <li><b>資金調達率（FR）</b>：先物で買いと売りのどちらが多いかを示す手数料。マイナス＝売りが多い。売りが多い状態で建玉が増えると、売った人の買い戻しで急騰する「踏み上げ」が起きやすいので +5点。+0.1%以上は買いが過熱なので −10点。</li>
+      <li><b>建玉（OI）</b>：先物で「まだ決済されていない取引の総額」。3日で+30%以上増えたら「レバレッジ急増」で −10点（検証ではその後弱い傾向）。</li>
+      <li><b>清算</b>：証拠金不足で強制的に決済された額。24時間で建玉の2%以上なら「清算多発」で −10点（その後弱い傾向）。</li>
+      <li><b>資金調達率（FR）</b>：先物で買いと売りのどちらが多いかを示す手数料。マイナス＝売りが多い。検証では予測にほとんど役立たなかったので、+0.1%以上の極端な過熱だけ −10点にしています。</li>
     </ul>
     <h2>タグの意味</h2>
     <ul>
@@ -235,7 +289,7 @@ const SIG={
   C:x=>x.brk&&x.hvr>=2,
   D:x=>x.brk168&&x.dvr>=2.5&&x.r24<0.2,
 };
-const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高"}, SIGPT={A:20,B:20,C:15,D:35};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）"}, SIGPT={A:15,B:15,C:10,D:25,E:40};
 function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
 
 async function scan(){
@@ -267,16 +321,19 @@ async function scan(){
     uni=uni.filter(u=>u.ok); if(!uni.length) throw new Error("データが取得できませんでした");
     uni.sort((a,b)=>b.score-a.score);
     const ft=await get("/futures/usdt/tickers")||[]; const fut=Object.fromEntries(ft.filter(t=>t.contract.endsWith("_USDT")).map(t=>[t.contract.slice(0,-5),t]));
-    const fl=uni.filter((u,i)=>(i<FUT_TOP||wl.has(u.base))&&fut[u.base]);
+    const fl=uni.filter((u,i)=>fut[u.base]&&(u.qv24>=THIN_QV||i<FUT_TOP||wl.has(u.base)));
     await pool(fl,async u=>{
       u.funding=+(+fut[u.base].funding_rate*100).toFixed(4);
-      const st=await get(`/futures/usdt/contract_stats?contract=${u.base}_USDT&interval=1h&limit=25`);
-      if(st&&st.length>=2){const o0=+st[0].open_interest_usd,o1=+st[st.length-1].open_interest_usd;
-        if(o0>0){const oc=(o1/o0-1)*100;u.oi_ch24=+oc.toFixed(1);
-          if(oc>=20&&Math.abs(u.ch24)<10){u.score+=10;u.reasons.push(`先物の建玉が24hで+${oc.toFixed(0)}%、価格は横ばい（+10）`)}
-          if(u.funding<0&&oc>=10){u.score+=5;u.reasons.push("売りが多い状態で建玉増加＝踏み上げの燃料（+5）")}}}
+      const st=await get(`/futures/usdt/contract_stats?contract=${u.base}_USDT&interval=1h&limit=73`);
+      if(st&&st.length>=73){ const n=st.length, oi=+st[n-1].open_interest_usd, o24=+st[n-25].open_interest_usd, o72=+st[0].open_interest_usd;
+        let liq=0; for(let k=n-24;k<n;k++) liq+=(+st[k].long_liq_usd||0)+(+st[k].short_liq_usd||0);
+        if(o24>0) u.oi_ch24=+((oi/o24-1)*100).toFixed(1);
+        if(o72>0&&oi>0){ u.oi_ch72=+((oi/o72-1)*100).toFixed(1); u.liq24=liq/oi;
+          if(u.liq24<0.001&&oi/o72-1<-0.05&&u.ch7<0&&u.qv24>=THIN_QV){ u.sig.E={ago:0}; u.score+=SIGPT.E; u.reasons.push(`E 落ち着き：24hの清算は建玉の${(u.liq24*100).toFixed(2)}%、建玉は3日で${u.oi_ch72}%、価格は1週間で${u.ch7}%。1週間保有向け（+${SIGPT.E}）`); }
+          if(oi/o72-1>=0.3){u.score-=10;u.tags.push("レバレッジ急増");u.reasons.push(`建玉が3日で+${u.oi_ch72}%＝過去検証ではその後弱い傾向（−10）`)}
+          if(u.liq24>=0.02){u.score-=10;u.tags.push("清算多発");u.reasons.push(`24時間の清算が建玉の${(u.liq24*100).toFixed(1)}%＝過去検証ではその後弱い傾向（−10）`)} } }
       if(u.funding>=0.1){u.score-=10;u.tags.push("過熱");u.reasons.push(`資金調達率${u.funding.toFixed(3)}%＝買いが過熱（−10）`)}
-    },4,(k,n)=>setP(0.87+0.13*k/n,`先物データを取得中 ${k}/${n}`));
+    },6,(k,n)=>setP(0.87+0.13*k/n,`先物データを取得中 ${k}/${n}`));
     uni.forEach(u=>{u.score=Math.round(u.score);u.has_futures=!!fut[u.base]}); uni.sort((a,b)=>b.score-a.score);
     const btc=uni.find(u=>u.base==="BTC");
     const data={at:Date.now(),universe:uni.length,btc:btc?btc.ch24:null,top:uni.filter(u=>u.base!=="BTC").slice(0,SHOW_TOP),watch:uni.filter(u=>wl.has(u.base)),wl:WL.join(",")};
@@ -295,14 +352,14 @@ function spark(a){if(!a||a.length<2)return"";const mn=Math.min(...a),mx=Math.max
   return`<svg class="sp" viewBox="0 0 ${w} ${h}" aria-label="72時間の値動き"><polyline fill="none" stroke="${a[a.length-1]>=a[0]?"var(--up)":"var(--down)"}" stroke-width="1.6" points="${pts}"/></svg>`}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function card(u,i){const w=Math.max(0,Math.min(100,u.score));
-  const sigTags=Object.keys(u.sig||{}).map(s=>`<span class="tag good">${SIGNAME[s]}・${u.sig[s].ago}h前</span>`).join("");
+  const sigTags=Object.keys(u.sig||{}).map(s=>`<span class="tag good">${SIGNAME[s]}・${u.sig[s].ago?u.sig[s].ago+"h前":"点灯中"}</span>`).join("");
   return`<div class="card"><div class="row"><span class="rank">${i+1}</span>
    <span class="sym"><a href="https://www.gate.com/trade/${esc(u.pair)}" target="_blank" rel="noopener">${esc(u.base)}</a></span>${spark(u.spark)}
    <div class="score"><b>${u.score}</b> 点<div class="bar"><i style="width:${w}%"></i></div></div></div>
-   <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
+   <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST|レバレッジ|清算/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
    <div class="nums"><div><span>価格</span> ${price(u.last)}</div><div><span>1時間</span> ${pct(u.r1)}</div><div><span>24時間</span> ${pct(u.ch24)}</div><div><span>7日</span> ${pct(u.ch7)}</div>
    <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
-   <div><span>建玉24h</span> ${u.oi_ch24!=null?pct(u.oi_ch24,0):(u.has_futures?"—":"先物なし")}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
+   <div><span>建玉3日</span> ${u.oi_ch72!=null?pct(u.oi_ch72,0):(u.has_futures?"—":"先物なし")}</div><div><span>24h清算/建玉</span> ${u.liq24!=null?(u.liq24*100).toFixed(2)+"%":"—"}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
    ${u.reasons&&u.reasons.length?`<details><summary>詳細（${u.reasons.length}件）</summary><ul>${u.reasons.map(r=>`<li>${esc(r)}</li>`).join("")}</ul></details>`:""}</div>`}
 function render(){
   ["top","watch","bt","help"].forEach(t=>$("#p-"+t).hidden=t!==tab);
