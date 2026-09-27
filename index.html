@@ -55,9 +55,9 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版 v6）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v7）</h1>
   <div class="meta" id="meta">データ取得前</div>
-  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。先物データ（建玉・清算・資金調達率）とオンチェーンデータも加えて検証しました。新しい<b>Eシグナル（落ち着き銘柄・1週間保有）</b>は学習・検証の両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
+  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。これまでの検証で<b>効果が確認できた E（落ち着き）と D（週高値ブレイク）だけ</b>に絞りました。売り方は「1週間保有＋損切り（1日の値動き×3）」、買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は減点します。両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
     <button data-t="top" class="on">シグナル</button>
     <button data-t="watch">お気に入り</button>
@@ -84,6 +84,31 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
+    <h2>総まとめ：インジケーターの取捨選択（v7）</h2>
+    <div class="card big">
+      <p>これまで試した候補を、<b>同じデータ（先物のある131銘柄・2026年4月〜9月）・同じ売り方（1週間保有＋損切り「1日の値動き×3」）</b>でもう一度まとめて比べ直しました。前半（〜7/18）＝学習、後半＝検証。数字は「ランダムに買った場合より1回あたり何%良かったか」です。</p>
+      <p><b>残す条件：</b>前半・後半の<b>両方で</b>ランダムより+1%以上良いこと、かつ回数が50回以上あること。</p>
+    </div>
+    <div class="tw"><table class="wrapt">
+      <tr><th>候補</th><th>回数</th><th>学習</th><th>検証</th><th>判定</th></tr>
+      <tr><td><b>E 落ち着き</b>（清算ほぼゼロ・建玉3日−5%以上・週下落）</td><td>358/221</td><td class="up"><b>+2.9%</b></td><td class="up"><b>+1.9%</b></td><td><b>採用（主役）</b></td></tr>
+      <tr><td>E＋警告サイン除外</td><td>278/187</td><td class="up">+2.9%</td><td class="up">+3.0%</td><td>警告は減点で反映</td></tr>
+      <tr><td><b>D 週高値ブレイク＋出来高</b></td><td>57/90</td><td class="up"><b>+8.9%</b></td><td class="up"><b>+1.8%</b></td><td><b>採用（回数少なめ）</b></td></tr>
+      <tr><td>F OBV先行上昇</td><td>298/215</td><td class="up">+4.8%</td><td>−0.1%</td><td>停止（前回と結果が変わった＝不安定）</td></tr>
+      <tr><td>B 静かな買い集め</td><td>327/256</td><td>+0.1%</td><td class="up">+4.3%</td><td>停止（前半効かず）</td></tr>
+      <tr><td>A 1時間出来高急増</td><td>193/130</td><td>+0.2%</td><td>+0.5%</td><td>停止</td></tr>
+      <tr><td>C 72時間高値ブレイク</td><td>255/227</td><td class="up">+1.4%</td><td>+0.2%</td><td>停止</td></tr>
+      <tr><td>総合スコア（清算・建玉・週足・OBVなどの順位の平均で上位10%）</td><td>347/261</td><td class="up">+1.7%</td><td>+0.2%</td><td>不採用</td></tr>
+      <tr><td>総合スコア＋出来高＋ADX方向など（4通り）</td><td>約400/270</td><td class="up">+1.3〜2.9%</td><td>−0.5〜+0.4%</td><td>不採用</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>「たくさんの指標を混ぜた総合点」は、前半では良く見えても後半で効かなくなりました。</b>指標を増やすほど「過去のデータにだけ合わせた」状態（過学習）になりやすいためです。シンプルな E の方が安定していました。</li>
+      <li>E は条件を1つ外すだけで効果がなくなるので、<b>3条件そろった時だけ</b>点灯させています。</li>
+      <li>D は「1週間保有＋広めの損切り」に売り方を変えたことで、前半・後半とも良くなりました。ただし回数が少ない（6か月で約150回）ので、信頼度は E より下です。</li>
+      <li>停止した A・B・C・F は画面に出さないようにしました（点数にも入れません）。</li>
+      <li><b>注意：</b>10銘柄に分けて持つ運用の計算は、どの取引を先に取るかで結果が大きく変わり（E +73%／ランダム +119% など、前回と逆転）、比較に使えないことが分かりました。成績は「1回あたり」で見てください。</li>
+    </ul></div>
+
     <h2>チャート形状・インジケーターの検証（2026年4月2日〜9月27日）</h2>
     <div class="card big">
       <p><b>方法：</b>先物のある130銘柄の4時間足で、<b>チャート形状9種類</b>（ダブルボトム、逆三尊、上昇三角形、上昇フラッグ、包み足、ハンマー、および弱気の形のダブルトップ・三尊・下降三角形）と<b>インジケーター13種類</b>（RSI、MACD、移動平均のゴールデンクロス、ボリンジャーバンド、ADX、OBV、VWAP）をプログラムで自動判定しました。形が完成した（ネックラインなどを抜けた）4時間足の終値で判定し、次の足で買い、「1週間保有＋損切り（1日の値動き×3）」で売った成績を、ランダムに買った場合と比べています。</p>
@@ -285,7 +310,8 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-help" class="help" hidden>
-    <h2>6つのシグナル</h2>
+    <h2>シグナル（v7で使うのは E と D の2つだけ）</h2>
+    <p><b>v7の方針：</b>E（点数50）と D（点数30）だけを使います。A・B・C・F は検証で安定した効果が確認できなかったため停止しました（下の説明は記録として残しています）。買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は各−10点、24時間で+30%以上の高騰済みは−20点です。</p>
     <ul>
       <li><b>A 1時間出来高急増</b>：直近1時間の売買金額が、その前24時間の平均の4倍以上。なのに価格はその1時間で0〜+5%、24時間で+15%未満（まだ大きく動いていない）。</li>
       <li><b>B 静かな買い集め</b>：直近24時間の売買金額が、その前7日間の1日平均の3倍以上。なのに24時間の値動きは±10%以内。</li>
@@ -349,12 +375,9 @@ function feat(d,ps,i){
   return {c,v24,hvr:avg24>0?qv/avg24:0,dvr:vb>0?v24/vb:0,r1:c/d[i-1][2]-1,r24:c/d[i-24][2]-1,brk:c>hi,brk168:c>hi7};
 }
 const SIG={
-  A:x=>x.hvr>=4&&x.r1>0&&x.r1<0.05&&x.r24<0.15,
-  B:x=>x.dvr>=3&&Math.abs(x.r24)<0.10,
-  C:x=>x.brk&&x.hvr>=2,
   D:x=>x.brk168&&x.dvr>=2.5&&x.r24<0.2,
 };
-const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇"}, SIGPT={A:15,B:15,C:10,D:25,E:40,F:15};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇"}, SIGPT={D:30,E:50,F:0};
 function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
 
 async function scan(){
@@ -390,10 +413,10 @@ async function scan(){
             if(k<=14){tr+=t;p+=pd;m+=md}else{tr=tr-tr/14+t;p=p-p/14+pd;m=m-m/14+md} if(k>=14){ P=100*p/tr; M=100*m/tr; const dx=100*Math.abs(P-M)/((P+M)||1e-12); if(isNaN(ad)){dxs.push(dx); if(dxs.length===14) ad=dxs.reduce((a,b)=>a+b,0)/14;} else ad=(ad*13+dx)/14; } }
           u.adxDn=ad>25&&M>P; let s1=0,s2=0; for(let k=K-19;k<=K;k++){s1+=g[k].c;s2+=g[k].c*g[k].c} const mb=s1/20, sdb=Math.sqrt(Math.max(0,s2/20-mb*mb)); u.bbDn=g[K].c<mb-2*sdb;
           let ob=0,vs20=0; for(let k=K-19;k<=K;k++){ ob+=g[k].c>g[k-1].c?g[k].v:g[k].c<g[k-1].c?-g[k].v:0; vs20+=g[k].v; } u.obvDiv=vs20>0&&ob/vs20>0.2&&Math.abs(g[K].c/g[K-20].c-1)<0.03;
-          if(u.obvDiv&&u.qv24>=THIN_QV){ u.sig.F={ago:0}; u.score+=SIGPT.F; u.reasons.push(`F OBV先行上昇：価格は20本（約3日）で${((g[K].c/g[K-20].c-1)*100).toFixed(1)}%と横ばいなのに、出来高の買い越しが${(ob/vs20*100).toFixed(0)}%（+${SIGPT.F}）`); }
-          if(u.rsi4<30){u.score-=5;u.tags.push("RSI30未満");u.reasons.push("4時間足RSIが30未満＝検証では買うと不利（−5）")}
-          if(u.adxDn){u.score-=5;u.tags.push("下落トレンド(ADX)");u.reasons.push("4時間足ADXが強い下落トレンド＝検証では買うと不利（−5）")}
-          if(u.bbDn){u.score-=5;u.tags.push("BB下抜け");u.reasons.push("4時間足でボリンジャーバンド下限を割った＝検証では買うと不利（−5）")} } }
+          if(false){ u.sig.F={ago:0}; u.score+=SIGPT.F; u.reasons.push(`F OBV先行上昇：価格は20本（約3日）で${((g[K].c/g[K-20].c-1)*100).toFixed(1)}%と横ばいなのに、出来高の買い越しが${(ob/vs20*100).toFixed(0)}%（+${SIGPT.F}）`); }
+          if(u.rsi4<30){u.score-=10;u.tags.push("RSI30未満");u.reasons.push("4時間足RSIが30未満＝検証では買うと不利（−10）")}
+          if(u.adxDn){u.score-=10;u.tags.push("下落トレンド(ADX)");u.reasons.push("4時間足ADXが強い下落トレンド＝検証では買うと不利（−10）")}
+          if(u.bbDn){u.score-=10;u.tags.push("BB下抜け");u.reasons.push("4時間足でボリンジャーバンド下限を割った＝検証では買うと不利（−10）")} } }
     },6,(k,n)=>setP(0.05+0.8*k/n,`1時間足を取得中 ${k}/${n}`));
     uni=uni.filter(u=>u.ok); if(!uni.length) throw new Error("データが取得できませんでした");
     uni.sort((a,b)=>b.score-a.score);
@@ -461,7 +484,7 @@ $("#btBtn").onclick=async()=>{
   try{const tk=await get("/spot/tickers"); if(!tk||!tk.length) throw new Error("接続できませんでした");
     const bases=tk.filter(t=>t.currency_pair.endsWith("_USDT")&&+t.quote_volume>=MIN_QV).map(t=>t.currency_pair.slice(0,-5)).filter(x=>!EXCLUDE.has(x)&&!/\d[LS]$/.test(x)&&x!=="BTC");
     const now=Math.floor(Date.now()/3600000)*3600; const ch=[[now-90*86400,now-60*86400-3600],[now-60*86400,now-30*86400-3600],[now-30*86400,now]];
-    const rules={R:x=>true,A:SIG.A,B:SIG.B,C:SIG.C,D:SIG.D};
+    const rules={R:x=>true,D:SIG.D};
     const acc={}; for(const k in rules) acc[k]=[];
     await pool(bases,async base=>{ let d=[]; for(const [f,t] of ch) d=d.concat(conv(await get(`/spot/candlesticks?currency_pair=${base}_USDT&interval=1h&from=${f}&to=${t}`)));
       const seen=new Set(); d=d.filter(x=>!seen.has(x[0])&&seen.add(x[0])).sort((x,y)=>x[0]-y[0]); const n=d.length-1; if(n<300) return;
@@ -471,7 +494,7 @@ $("#btBtn").onclick=async()=>{
           const e0=d[i+1][5]; let vs=0,vs2=0,vn=0; for(let k=i-167;k<=i;k++){const lr=Math.log(d[k][2]/d[k-1][2]); if(isFinite(lr)){vs+=lr;vs2+=lr*lr;vn++}} const stp=e0*(1-3*Math.sqrt(Math.max(0,vs2/vn-(vs/vn)**2))*Math.sqrt(24)); let r=null; for(let m=i+1;m<=i+168;m++){ if(d[m][4]<=stp){r=Math.min(stp,d[m][5])/e0-1;break} } if(r===null) r=d[i+168][2]/e0-1;
           acc[k].push(r-0.003); } }
     },6,(k,n)=>setP(k/n,`1時間足を取得・計算中 ${k}/${n}`));
-    const nm={R:"ランダム（比較用）",A:SIGNAME.A,B:SIGNAME.B,C:SIGNAME.C,D:SIGNAME.D}; const P=x=>(x*100).toFixed(1)+"%";
+    const nm={R:"ランダム（比較用）",D:SIGNAME.D}; const P=x=>(x*100).toFixed(1)+"%";
     $("#btOut").innerHTML=`<div class="tw" style="margin-top:10px"><table><tr><th>シグナル</th><th>件数</th><th>平均損益</th><th>勝率</th></tr>`+
       Object.keys(rules).map(k=>{const a=acc[k];if(!a.length)return"";const m=a.reduce((x,y)=>x+y,0)/a.length;return`<tr><td>${nm[k]}</td><td>${a.length.toLocaleString()}</td><td class="${m>0?"up":"down"}">${m>0?"+":""}${P(m)}</td><td>${P(a.filter(x=>x>0).length/a.length)}</td></tr>`}).join("")+`</table></div>`;
     setP(1,`完了：${bases.length}銘柄（過去90日・1週間保有＋損切り「1日の値動き×3」・手数料等0.3%込み）`);
