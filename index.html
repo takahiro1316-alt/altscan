@@ -55,7 +55,7 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版 v4）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v5）</h1>
   <div class="meta" id="meta">データ取得前</div>
   <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。先物データ（建玉・清算・資金調達率）とオンチェーンデータも加えて検証しました。新しい<b>Eシグナル（落ち着き銘柄・1週間保有）</b>は学習・検証の両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
@@ -84,6 +84,34 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
+    <h2>手仕舞い（利確・損切り）の検証（2026年4月2日〜9月27日）</h2>
+    <div class="card big">
+      <p><b>方法：</b>買うタイミング（E・Dシグナル）は固定し、<b>売り方だけを23通り</b>に変えて比べました。先物のある130銘柄の1時間足。前半（〜7/18）＝学習、後半＝検証。手数料等0.3%込み。損切りは値段が飛んだ時は不利な値段（始値）で約定する計算です。</p>
+      <p><b>結論：早く売るルールほど成績が悪くなりました。</b>このシグナルの利益は「たまに大きく上がる銘柄」から来ているので、利確・きつい損切り・高値からの下落で売るルールは、その大当たりを途中で手放してしまいます。一番良かったのは<b>「1週間持つ＋万一のための広めの損切り（1日の値動きの3倍）」</b>です。</p>
+    </div>
+    <p class="meta">「1日の値動き」＝直近1週間の1時間ごとの値動きから計算した、1日あたりの普通の値動きの大きさ（ボラティリティ）。E銘柄では中央値4.5%なので、損切り幅はおよそ−13%（値動きの小さい銘柄は−7%、大きい銘柄は−30%）。</p>
+    <div class="tw"><table class="wrapt">
+      <tr><th>Eの売り方</th><th>学習<br>平均 / 中央値</th><th>検証<br>平均 / 中央値</th></tr>
+      <tr><td><b>1週間で売る（これまで）</b></td><td>+3.5 / 0.0</td><td>+7.1 / +2.6</td></tr>
+      <tr><td><b>1週間＋損切り「1日の値動き×3」（おすすめ）</b></td><td class="up"><b>+3.6 / −0.2</b></td><td class="up"><b>+6.8 / +2.4</b></td></tr>
+      <tr><td>1週間＋損切り−20%</td><td>+3.3 / −0.2</td><td>+6.6 / +2.4</td></tr>
+      <tr><td>1週間＋損切り−10%</td><td>+2.8 / −1.7</td><td>+5.5 / +1.4</td></tr>
+      <tr><td>2週間で売る</td><td>+8.5 / −1.1</td><td>+10.9 / +3.5</td></tr>
+      <tr><td>3日で売る</td><td>+1.2 / −0.3</td><td>+0.5 / −0.1</td></tr>
+      <tr><td>利確+20%／損切り−10%</td><td>+0.3 / −1.0</td><td>+3.1 / +1.9</td></tr>
+      <tr><td>高値から−10%で売る</td><td>+0.5 / −1.9</td><td>+2.1 / −0.9</td></tr>
+      <tr><td>高値から−15%で売る</td><td>+0.5 / −1.0</td><td>+4.0 / +1.4</td></tr>
+      <tr><td>過熱（建玉急増・清算多発）が出たら売る</td><td>+1.5 / +0.1</td><td>+4.4 / +2.4</td></tr>
+      <tr><td>+10%上がった後、24時間平均を割ったら売る</td><td>+1.9 / +1.1</td><td>+3.9 / +3.2</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>おすすめの売り方は、成績をほぼ落とさずに「大損の保険」をかけられる</b>もの。660回中100回が損切りで終わりましたが、平均はほぼ同じでした。</li>
+      <li>2週間持つと平均は上がりますが、学習期間の中央値がマイナスで、結果のばらつきも大きくなります。</li>
+      <li>「過熱が出たら売る」「平均線割れで売る」は勝率・中央値は良くなりますが、大きく伸びる銘柄を早く手放すので平均は下がりました。</li>
+      <li>Dシグナルでも同じ傾向でした（1週間で売る：学習+3.4%／検証+12.3%、以前おすすめした「高値から7〜10%で売る」は学習−0.3%／検証+4.5%）。<b>Dの売り方も「1週間＋損切り（1日の値動き×3）」に変更</b>しました（学習+3.7%／検証+11.0%）。</li>
+      <li>比較：ランダムに買った場合、売り方を変えても成績はほとんど変わりませんでした（1週間 +0.4%／+5.8%）。<b>売り方の工夫だけで勝てるようにはならない</b>ので、良い買いシグナルが前提です。</li>
+    </ul></div>
+
     <h2>先物・オンチェーンを追加した検証（2026年4月1日〜9月26日）</h2>
     <div class="card big">
       <p><b>追加したデータ：</b>①Gate.io先物の1時間ごとの <b>建玉</b>（まだ決済されていない先物の総額）・<b>清算額</b>（証拠金不足で強制決済された額）・<b>資金調達率</b>・<b>ロング/ショート比率</b>（236銘柄）。②DefiLlama の<b>オンチェーンデータ</b>：プロトコルに預けられた資産額（TVL）・手数料収入、チェーンごとのTVLとステーブルコイン残高（約90銘柄）。</p>
@@ -213,7 +241,7 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 
     <h2>自分で検証し直す</h2>
     <div class="card">
-      <p class="meta">約400銘柄×90日分の1時間足を取り直して、各シグナルの成績を最新データで計算し直します（売り方は「高値から7%下落で売る・最長72時間」）。3〜4分かかります。</p>
+      <p class="meta">約400銘柄×90日分の1時間足を取り直して、各シグナルの成績を最新データで計算し直します（売り方は「1週間保有＋損切り（1日の値動き×3）」）。3〜4分かかります。</p>
       <button class="btn primary" id="btBtn">最新データで再検証</button>
       <div class="prog" id="btProg" hidden><i></i></div>
       <div class="meta" id="btTxt"></div>
@@ -230,9 +258,10 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
       <li><b>E 落ち着き（1週間保有向け・一番おすすめ度が高い）</b>：先物がある銘柄で、①24時間の清算額が建玉の0.1%未満（強制決済がほぼない）②建玉が3日で5%以上減った（レバレッジが抜けた）③価格が1週間で下がっている。過熱が冷めた銘柄を買い、1週間持つ。4〜9月の検証で学習・検証の両期間ともランダムより良かった唯一のシグナル。10銘柄程度に分けて買う前提。</li>
       <li><b>D 週高値ブレイク＋出来高（改良版）</b>：過去1週間（168時間）の最高値を超え、24時間の出来高が普段の2.5倍以上、24時間の上昇は+20%未満。8か月の検証でいちばん安定していたもの。ただし勝てたのはほぼ上げ相場の時だけ。</li>
     </ul>
-    <h2>検証で一番マシだった売り方</h2>
+    <h2>検証で一番良かった売り方（手仕舞い）</h2>
     <ul>
-      <li><b>買った後の最高値から7%下がったら売る（トレーリングストップ）、最長72時間</b>。固定の利益確定（+10%で売る等）より、上げ相場で利益を伸ばせる分だけ成績が良かった。</li>
+      <li><b>1週間持って売る。ただし「買値 −（1日の値動き×3）」まで下がったらすぐ損切り</b>。E・Dとも、利確・きつい損切り・高値からの下落で売るより成績が良かった。各カードに損切りの目安（%と価格）を表示しています。</li>
+      <li>途中で+20%などになっても、早く売らない方が平均では良かった（大きく伸びる銘柄を逃さないため）。</li>
       <li>勝率は40%前後。小さく負けて、たまに大きく勝つ形になる。</li>
     </ul>
     <p>点数 = E 40点 + D 25点 + A 15点 + B 15点 + C 10点（検証結果の良い順に重く）。Eは状態が続く限り「点灯中」と表示。シグナルは直近6時間以内に点灯したものを表示し、「何時間前か」も出します。時間が経つほど「もう遅い」可能性が高くなります。</p>
@@ -310,6 +339,7 @@ async function scan(){
       u.sig={}; u.reasons=[]; u.tags=[]; u.score=0;
       for(let k=0;k<LOOK;k++){ const i=n-k; const x=feat(d,ps,i);
         for(const s in SIG){ if(u.sig[s]==null && SIG[s](x)) u.sig[s]={ago:k+1,hvr:x.hvr,dvr:x.dvr,price:x.c}; } }
+      let vs=0,vs2=0,vn=0; for(let k=n-167;k<=n;k++){const lr=Math.log(d[k][2]/d[k-1][2]); if(isFinite(lr)){vs+=lr;vs2+=lr*lr;vn++}} const dvol=vn?Math.sqrt(Math.max(0,vs2/vn-(vs/vn)**2))*Math.sqrt(24):0; u.stopPct=+(Math.min(0.9,3*dvol)*100).toFixed(1);
       const x=feat(d,ps,n); Object.assign(u,{hvr:+x.hvr.toFixed(1),dvr:+x.dvr.toFixed(1),r1:+(x.r1*100).toFixed(1),ch7:+((d[n][2]/d[n-168][2]-1)*100).toFixed(1),spark:d.slice(-72).map(v=>v[2])});
       for(const s in u.sig){ const g=u.sig[s]; const decay=1-0.1*(g.ago-1); u.score+=SIGPT[s]*decay;
         u.reasons.push(`${SIGNAME[s]}：${g.ago}時間前に点灯（${s==="B"?"24h出来高 普段の"+g.dvr.toFixed(1)+"倍":"1h出来高 平均の"+g.hvr.toFixed(1)+"倍"}／点灯時の価格 ${price(g.price)}・今 ${u.last>=g.price?"+":""}${((u.last/g.price-1)*100).toFixed(1)}%）`); }
@@ -357,6 +387,7 @@ function card(u,i){const w=Math.max(0,Math.min(100,u.score));
    <span class="sym"><a href="https://www.gate.com/trade/${esc(u.pair)}" target="_blank" rel="noopener">${esc(u.base)}</a></span>${spark(u.spark)}
    <div class="score"><b>${u.score}</b> 点<div class="bar"><i style="width:${w}%"></i></div></div></div>
    <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST|レバレッジ|清算/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
+   ${(u.sig&&(u.sig.E||u.sig.D))?`<div class="meta" style="margin-top:4px">手仕舞いの目安：<b>1週間後に売る</b>／損切り <b>−${u.stopPct}%</b>（買値から。1日の値動き×3）＝ ${price(u.last*(1-u.stopPct/100))} 付近</div>`:""}
    <div class="nums"><div><span>価格</span> ${price(u.last)}</div><div><span>1時間</span> ${pct(u.r1)}</div><div><span>24時間</span> ${pct(u.ch24)}</div><div><span>7日</span> ${pct(u.ch7)}</div>
    <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
    <div><span>建玉3日</span> ${u.oi_ch72!=null?pct(u.oi_ch72,0):(u.has_futures?"—":"先物なし")}</div><div><span>24h清算/建玉</span> ${u.liq24!=null?(u.liq24*100).toFixed(2)+"%":"—"}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
@@ -388,15 +419,15 @@ $("#btBtn").onclick=async()=>{
     await pool(bases,async base=>{ let d=[]; for(const [f,t] of ch) d=d.concat(conv(await get(`/spot/candlesticks?currency_pair=${base}_USDT&interval=1h&from=${f}&to=${t}`)));
       const seen=new Set(); d=d.filter(x=>!seen.has(x[0])&&seen.add(x[0])).sort((x,y)=>x[0]-y[0]); const n=d.length-1; if(n<300) return;
       const ps=prefix(d); const last={};
-      for(let i=192;i<n-73;i++){ const x=feat(d,ps,i); if(x.v24<MIN_QV||!(x.c>0)) continue;
+      for(let i=192;i<n-170;i++){ const x=feat(d,ps,i); if(x.v24<MIN_QV||!(x.c>0)) continue;
         for(const k in rules){ if(!rules[k](x)) continue; if(k==="R"){if(i%6)continue}else{if(last[k]!=null&&i-last[k]<24)continue;last[k]=i}
-          const e0=d[i+1][5]; let pk=e0, r=null; for(let m=i+1;m<=i+72;m++){ if(m>i+1&&d[m][4]<=pk*0.93){r=pk*0.93/e0-1;break} pk=Math.max(pk,d[m][3]); } if(r===null) r=d[i+72][2]/e0-1;
+          const e0=d[i+1][5]; let vs=0,vs2=0,vn=0; for(let k=i-167;k<=i;k++){const lr=Math.log(d[k][2]/d[k-1][2]); if(isFinite(lr)){vs+=lr;vs2+=lr*lr;vn++}} const stp=e0*(1-3*Math.sqrt(Math.max(0,vs2/vn-(vs/vn)**2))*Math.sqrt(24)); let r=null; for(let m=i+1;m<=i+168;m++){ if(d[m][4]<=stp){r=Math.min(stp,d[m][5])/e0-1;break} } if(r===null) r=d[i+168][2]/e0-1;
           acc[k].push(r-0.003); } }
     },6,(k,n)=>setP(k/n,`1時間足を取得・計算中 ${k}/${n}`));
     const nm={R:"ランダム（比較用）",A:SIGNAME.A,B:SIGNAME.B,C:SIGNAME.C,D:SIGNAME.D}; const P=x=>(x*100).toFixed(1)+"%";
     $("#btOut").innerHTML=`<div class="tw" style="margin-top:10px"><table><tr><th>シグナル</th><th>件数</th><th>平均損益</th><th>勝率</th></tr>`+
       Object.keys(rules).map(k=>{const a=acc[k];if(!a.length)return"";const m=a.reduce((x,y)=>x+y,0)/a.length;return`<tr><td>${nm[k]}</td><td>${a.length.toLocaleString()}</td><td class="${m>0?"up":"down"}">${m>0?"+":""}${P(m)}</td><td>${P(a.filter(x=>x>0).length/a.length)}</td></tr>`}).join("")+`</table></div>`;
-    setP(1,`完了：${bases.length}銘柄（過去90日・高値から7%下落で売り/最長72時間・手数料等0.3%込み）`);
+    setP(1,`完了：${bases.length}銘柄（過去90日・1週間保有＋損切り「1日の値動き×3」・手数料等0.3%込み）`);
   }catch(e){$("#btTxt").textContent="エラー: "+e.message}
   b.disabled=false;
 };
