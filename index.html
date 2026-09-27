@@ -401,8 +401,8 @@ async function scan(){
     const fl=uni.filter((u,i)=>fut[u.base]&&(u.qv24>=THIN_QV||i<FUT_TOP||wl.has(u.base)));
     await pool(fl,async u=>{
       u.funding=+(+fut[u.base].funding_rate*100).toFixed(4);
-      const st=await get(`/futures/usdt/contract_stats?contract=${u.base}_USDT&interval=1h&limit=73`);
-      if(st&&st.length>=73){ const n=st.length, oi=+st[n-1].open_interest_usd, o24=+st[n-25].open_interest_usd, o72=+st[0].open_interest_usd;
+      const st=await get(`/futures/usdt/contract_stats?contract=${u.base}_USDT&interval=1h&limit=80`);
+      if(st&&st.length>=73){ const n=st.length, oi=+st[n-1].open_interest_usd, o24=+st[n-25].open_interest_usd, o72=+st[n-73].open_interest_usd;
         let liq=0; for(let k=n-24;k<n;k++) liq+=(+st[k].long_liq_usd||0)+(+st[k].short_liq_usd||0);
         if(o24>0) u.oi_ch24=+((oi/o24-1)*100).toFixed(1);
         if(o72>0&&oi>0){ u.oi_ch72=+((oi/o72-1)*100).toFixed(1); u.liq24=liq/oi;
