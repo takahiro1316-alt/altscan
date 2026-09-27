@@ -55,7 +55,7 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版 v5）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v6）</h1>
   <div class="meta" id="meta">データ取得前</div>
   <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。先物データ（建玉・清算・資金調達率）とオンチェーンデータも加えて検証しました。新しい<b>Eシグナル（落ち着き銘柄・1週間保有）</b>は学習・検証の両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
@@ -84,6 +84,41 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
+    <h2>チャート形状・インジケーターの検証（2026年4月2日〜9月27日）</h2>
+    <div class="card big">
+      <p><b>方法：</b>先物のある130銘柄の4時間足で、<b>チャート形状9種類</b>（ダブルボトム、逆三尊、上昇三角形、上昇フラッグ、包み足、ハンマー、および弱気の形のダブルトップ・三尊・下降三角形）と<b>インジケーター13種類</b>（RSI、MACD、移動平均のゴールデンクロス、ボリンジャーバンド、ADX、OBV、VWAP）をプログラムで自動判定しました。形が完成した（ネックラインなどを抜けた）4時間足の終値で判定し、次の足で買い、「1週間保有＋損切り（1日の値動き×3）」で売った成績を、ランダムに買った場合と比べています。</p>
+      <p><b>結論：チャート形状は、どれも前半・後半の両方で安定して効くものはありませんでした。</b>インジケーターでは「OBV先行上昇」だけが両期間でプラス、「RSI30未満」「ADXの強い下落」「ボリンジャーバンド下抜け」は両期間でマイナス（買ってはいけないサイン）でした。</p>
+    </div>
+    <p class="meta">数字は「ランダムに買った場合より何%良かったか（1回あたり・1週間保有）」。左が学習期間（〜7/18）、右が検証期間。回数が50回未満のものは偶然の影響が大きいので参考程度です。</p>
+    <div class="tw"><table class="wrapt">
+      <tr><th>チャート形状</th><th>回数</th><th>学習</th><th>検証</th><th>判定</th></tr>
+      <tr><td>逆三尊（底の形）</td><td>26/23</td><td class="up">+4.8%</td><td class="up">+8.0%</td><td>回数が少なすぎ</td></tr>
+      <tr><td>上昇三角形</td><td>64/37</td><td class="up">+1.1%</td><td class="down">−6.2%</td><td>効かない</td></tr>
+      <tr><td>上昇フラッグ</td><td>44/35</td><td class="down">−7.2%</td><td class="up">+3.5%</td><td>効かない</td></tr>
+      <tr><td>ダブルボトム</td><td>135/83</td><td class="down">−1.7%</td><td class="down">−0.6%</td><td>効かない</td></tr>
+      <tr><td>包み足（陽線）</td><td>199/145</td><td class="down">−2.2%</td><td class="down">−0.5%</td><td>効かない</td></tr>
+      <tr><td>ハンマー</td><td>182/93</td><td class="down">−2.5%</td><td class="up">+2.3%</td><td>効かない</td></tr>
+      <tr><td>三尊（弱気の形のはず）</td><td>43/19</td><td class="up">+1.8%</td><td class="up">+5.8%</td><td>教科書と逆</td></tr>
+      <tr><td>ダブルトップ（弱気の形）</td><td>133/52</td><td class="down">−1.3%</td><td class="down">−0.5%</td><td>ほぼ無関係</td></tr>
+    </table></div>
+    <div class="tw" style="margin-top:10px"><table class="wrapt">
+      <tr><th>インジケーター</th><th>回数</th><th>学習</th><th>検証</th><th>判定</th></tr>
+      <tr><td><b>OBV先行上昇</b>（価格は横ばいなのに出来高の買い越しが増える）</td><td>323/216</td><td class="up"><b>+3.0%</b></td><td class="up"><b>+1.9%</b></td><td>両期間プラス → <b>F</b>として追加</td></tr>
+      <tr><td>ADX 強い上昇トレンド</td><td>617/454</td><td class="up">+1.0%</td><td class="up">+1.0%</td><td>わずかにプラス</td></tr>
+      <tr><td>RSI 70超え</td><td>377/311</td><td class="up">+0.1%</td><td class="up">+3.2%</td><td>不安定</td></tr>
+      <tr><td>移動平均ゴールデンクロス</td><td>280/213</td><td class="down">−0.6%</td><td class="up">+2.1%</td><td>不安定</td></tr>
+      <tr><td>MACDゴールデンクロス</td><td>577/373</td><td class="down">−0.5%</td><td class="down">−0.7%</td><td>効かない</td></tr>
+      <tr><td><b>RSI 30未満（売られすぎ）</b></td><td>239/116</td><td class="down"><b>−4.3%</b></td><td class="down">−0.4%</td><td>買うと不利 → 減点</td></tr>
+      <tr><td><b>ADX 強い下落トレンド</b></td><td>464/266</td><td class="down"><b>−2.3%</b></td><td class="down"><b>−1.7%</b></td><td>買うと不利 → 減点</td></tr>
+      <tr><td><b>ボリンジャーバンド下抜け</b></td><td>459/254</td><td class="down"><b>−1.6%</b></td><td class="down"><b>−2.3%</b></td><td>買うと不利 → 減点</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>チャート形状が効かなかった理由（推測）：</b>形の判定には「どこが山でどこが谷か」の決め方に幅があり、同じ形でも結果がばらばら。仮想通貨は値動きが荒く、形が完成しても「だまし」が多い。弱気の形（三尊）の後に上がっているのも、それを示しています。</li>
+      <li><b>「売られすぎ（RSI30未満）で買う」は逆効果</b>でした。下がっている銘柄はさらに下がりやすい。</li>
+      <li><b>Eシグナルの3条件は全部必要</b>でした。1つずつ外すと、検証期間の成績がランダム並みに落ちました（清算条件を外す −0.6%、建玉条件を外す 0.0%、週下落条件を外す −0.4%）。</li>
+      <li>E に「ADXの強い下落を除く」「RSI40以上」を足すと平均は少し上がりました（学習 +2.9%→+3.3%、検証 +6.9%→+8.4%）が、中央値は下がり、大当たりを除くと差がなかったため<b>条件には加えず、警告タグとして表示</b>にしました。</li>
+    </ul></div>
+
     <h2>手仕舞い（利確・損切り）の検証（2026年4月2日〜9月27日）</h2>
     <div class="card big">
       <p><b>方法：</b>買うタイミング（E・Dシグナル）は固定し、<b>売り方だけを23通り</b>に変えて比べました。先物のある130銘柄の1時間足。前半（〜7/18）＝学習、後半＝検証。手数料等0.3%込み。損切りは値段が飛んだ時は不利な値段（始値）で約定する計算です。</p>
@@ -250,12 +285,13 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-help" class="help" hidden>
-    <h2>5つのシグナル</h2>
+    <h2>6つのシグナル</h2>
     <ul>
       <li><b>A 1時間出来高急増</b>：直近1時間の売買金額が、その前24時間の平均の4倍以上。なのに価格はその1時間で0〜+5%、24時間で+15%未満（まだ大きく動いていない）。</li>
       <li><b>B 静かな買い集め</b>：直近24時間の売買金額が、その前7日間の1日平均の3倍以上。なのに24時間の値動きは±10%以内。</li>
       <li><b>C 72時間高値ブレイク</b>：過去72時間で一番高い値段を超え、出来高も平均の2倍以上。</li>
       <li><b>E 落ち着き（1週間保有向け・一番おすすめ度が高い）</b>：先物がある銘柄で、①24時間の清算額が建玉の0.1%未満（強制決済がほぼない）②建玉が3日で5%以上減った（レバレッジが抜けた）③価格が1週間で下がっている。過熱が冷めた銘柄を買い、1週間持つ。4〜9月の検証で学習・検証の両期間ともランダムより良かった唯一のシグナル。10銘柄程度に分けて買う前提。</li>
+      <li><b>F OBV先行上昇（参考）</b>：4時間足で、価格は約3日（20本）横ばいなのに、上がった足の出来高から下がった足の出来高を引いた「OBV」が増えている（こっそり買われている）。チャート・インジケーター検証で唯一、両期間でランダムより良かった（+3.0%／+1.9%）。ただし中央値はマイナスで、効果は小さめ。</li>
       <li><b>D 週高値ブレイク＋出来高（改良版）</b>：過去1週間（168時間）の最高値を超え、24時間の出来高が普段の2.5倍以上、24時間の上昇は+20%未満。8か月の検証でいちばん安定していたもの。ただし勝てたのはほぼ上げ相場の時だけ。</li>
     </ul>
     <h2>検証で一番良かった売り方（手仕舞い）</h2>
@@ -318,7 +354,7 @@ const SIG={
   C:x=>x.brk&&x.hvr>=2,
   D:x=>x.brk168&&x.dvr>=2.5&&x.r24<0.2,
 };
-const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）"}, SIGPT={A:15,B:15,C:10,D:25,E:40};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇"}, SIGPT={A:15,B:15,C:10,D:25,E:40,F:15};
 function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
 
 async function scan(){
@@ -347,6 +383,17 @@ async function scan(){
       if(u.qv24<THIN_QV){u.score-=5;u.tags.push("低流動性")}
       if(u.buy&&now-u.buy<14*86400) u.tags.push(`新規上場${Math.round((now-u.buy)/86400)}日`);
       if(u.st){u.score-=20;u.tags.push("ST(警告銘柄)")}
+      { const g=[]; for(let e=n;e-3>=0;e-=4){ let hh=-Infinity,ll=Infinity,vv=0; for(let j=e-3;j<=e;j++){hh=Math.max(hh,d[j][3]);ll=Math.min(ll,d[j][4]);vv+=d[j][1];} g.unshift({o:d[e-3][5],h:hh,l:ll,c:d[e][2],v:vv}); }
+        const K=g.length-1;
+        if(K>=40){ let ag=0,al=0; for(let k=1;k<=K;k++){ const df=g[k].c-g[k-1].c, gg=df>0?df:0, ls=df<0?-df:0; if(k<=14){ag+=gg/14;al+=ls/14}else{ag=(ag*13+gg)/14;al=(al*13+ls)/14} } u.rsi4=+(100-100/(1+ag/(al||1e-12))).toFixed(0);
+          let tr=0,p=0,m=0,ad=NaN,dxs=[],P=0,M=0; for(let k=1;k<=K;k++){ const t=Math.max(g[k].h-g[k].l,Math.abs(g[k].h-g[k-1].c),Math.abs(g[k].l-g[k-1].c)); const up=g[k].h-g[k-1].h, dn=g[k-1].l-g[k].l; const pd=up>dn&&up>0?up:0, md=dn>up&&dn>0?dn:0;
+            if(k<=14){tr+=t;p+=pd;m+=md}else{tr=tr-tr/14+t;p=p-p/14+pd;m=m-m/14+md} if(k>=14){ P=100*p/tr; M=100*m/tr; const dx=100*Math.abs(P-M)/((P+M)||1e-12); if(isNaN(ad)){dxs.push(dx); if(dxs.length===14) ad=dxs.reduce((a,b)=>a+b,0)/14;} else ad=(ad*13+dx)/14; } }
+          u.adxDn=ad>25&&M>P; let s1=0,s2=0; for(let k=K-19;k<=K;k++){s1+=g[k].c;s2+=g[k].c*g[k].c} const mb=s1/20, sdb=Math.sqrt(Math.max(0,s2/20-mb*mb)); u.bbDn=g[K].c<mb-2*sdb;
+          let ob=0,vs20=0; for(let k=K-19;k<=K;k++){ ob+=g[k].c>g[k-1].c?g[k].v:g[k].c<g[k-1].c?-g[k].v:0; vs20+=g[k].v; } u.obvDiv=vs20>0&&ob/vs20>0.2&&Math.abs(g[K].c/g[K-20].c-1)<0.03;
+          if(u.obvDiv&&u.qv24>=THIN_QV){ u.sig.F={ago:0}; u.score+=SIGPT.F; u.reasons.push(`F OBV先行上昇：価格は20本（約3日）で${((g[K].c/g[K-20].c-1)*100).toFixed(1)}%と横ばいなのに、出来高の買い越しが${(ob/vs20*100).toFixed(0)}%（+${SIGPT.F}）`); }
+          if(u.rsi4<30){u.score-=5;u.tags.push("RSI30未満");u.reasons.push("4時間足RSIが30未満＝検証では買うと不利（−5）")}
+          if(u.adxDn){u.score-=5;u.tags.push("下落トレンド(ADX)");u.reasons.push("4時間足ADXが強い下落トレンド＝検証では買うと不利（−5）")}
+          if(u.bbDn){u.score-=5;u.tags.push("BB下抜け");u.reasons.push("4時間足でボリンジャーバンド下限を割った＝検証では買うと不利（−5）")} } }
     },6,(k,n)=>setP(0.05+0.8*k/n,`1時間足を取得中 ${k}/${n}`));
     uni=uni.filter(u=>u.ok); if(!uni.length) throw new Error("データが取得できませんでした");
     uni.sort((a,b)=>b.score-a.score);
@@ -386,10 +433,10 @@ function card(u,i){const w=Math.max(0,Math.min(100,u.score));
   return`<div class="card"><div class="row"><span class="rank">${i+1}</span>
    <span class="sym"><a href="https://www.gate.com/trade/${esc(u.pair)}" target="_blank" rel="noopener">${esc(u.base)}</a></span>${spark(u.spark)}
    <div class="score"><b>${u.score}</b> 点<div class="bar"><i style="width:${w}%"></i></div></div></div>
-   <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST|レバレッジ|清算/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
+   <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST|レバレッジ|清算|RSI30|下落トレンド|BB下抜け/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
    ${(u.sig&&(u.sig.E||u.sig.D))?`<div class="meta" style="margin-top:4px">手仕舞いの目安：<b>1週間後に売る</b>／損切り <b>−${u.stopPct}%</b>（買値から。1日の値動き×3）＝ ${price(u.last*(1-u.stopPct/100))} 付近</div>`:""}
    <div class="nums"><div><span>価格</span> ${price(u.last)}</div><div><span>1時間</span> ${pct(u.r1)}</div><div><span>24時間</span> ${pct(u.ch24)}</div><div><span>7日</span> ${pct(u.ch7)}</div>
-   <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
+   <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>RSI(4h)</span> ${u.rsi4??"—"}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
    <div><span>建玉3日</span> ${u.oi_ch72!=null?pct(u.oi_ch72,0):(u.has_futures?"—":"先物なし")}</div><div><span>24h清算/建玉</span> ${u.liq24!=null?(u.liq24*100).toFixed(2)+"%":"—"}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
    ${u.reasons&&u.reasons.length?`<details><summary>詳細（${u.reasons.length}件）</summary><ul>${u.reasons.map(r=>`<li>${esc(r)}</li>`).join("")}</ul></details>`:""}</div>`}
 function render(){
