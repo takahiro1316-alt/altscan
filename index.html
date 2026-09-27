@@ -55,9 +55,9 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版 v7）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v8）</h1>
   <div class="meta" id="meta">データ取得前</div>
-  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。これまでの検証で<b>効果が確認できた E（落ち着き）と D（週高値ブレイク）だけ</b>に絞りました。売り方は「1週間保有＋損切り（1日の値動き×3）」、買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は減点します。両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
+  <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。これまでの検証で効果が確認できた<b>E（落ち着き）＋WaveTrendの確認</b>と、GitHubで人気の指標から唯一残った<b>G（SuperTrend買い転換）</b>を中心にしています。売り方は「1週間保有＋損切り（1日の値動き×3）」、買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は減点します。両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
     <button data-t="top" class="on">シグナル</button>
     <button data-t="watch">お気に入り</button>
@@ -84,6 +84,37 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
+    <h2>GitHub・TradingViewで人気の6指標の検証（v8）</h2>
+    <div class="card big">
+      <p><b>方法：</b>SuperTrend、Squeeze Momentum（LazyBear）、WaveTrend（LazyBear）、UT Bot、一目均衡表、Hull移動平均の6つを、公開されている計算式どおりに4時間足で再現しました（<b>未来のデータを使わないよう</b>、雲の位置なども確定済みの値だけ使用）。①単独の買いサインとして、②Eシグナルに足す「ふるい」として、それぞれ試しました。先物のある132銘柄・2026年4〜9月、売り方は「1週間保有＋損切り（1日の値動き×3）」、数字は<b>ランダムに買った場合との差</b>（前半＝学習／後半＝検証）です。</p>
+    </div>
+    <div class="tw"><table class="wrapt">
+      <tr><th>単独の買いサイン</th><th>回数</th><th>学習</th><th>検証</th><th>判定</th></tr>
+      <tr><td><b>SuperTrend 買い転換</b>（10,3）</td><td>296/231</td><td class="up"><b>+3.1%</b></td><td class="up"><b>+2.5%</b></td><td><b>採用（G）</b></td></tr>
+      <tr><td>Squeeze Momentum 発射</td><td>319/208</td><td class="up">+1.9%</td><td class="down">−1.0%</td><td>不採用</td></tr>
+      <tr><td>WaveTrend 売られすぎ反転</td><td>205/112</td><td class="down">−4.1%</td><td class="up">+3.3%</td><td>不採用</td></tr>
+      <tr><td>UT Bot 買い</td><td>654/446</td><td class="down">−2.0%</td><td class="up">+1.0%</td><td>不採用</td></tr>
+      <tr><td>一目 雲の上抜け</td><td>264/218</td><td class="up">+0.8%</td><td class="up">+0.4%</td><td>不採用</td></tr>
+      <tr><td>Hull MA 上向き転換</td><td>438/325</td><td class="down">−0.4%</td><td class="up">+1.1%</td><td>不採用</td></tr>
+    </table></div>
+    <div class="tw" style="margin-top:10px"><table class="wrapt">
+      <tr><th>Eに足した場合</th><th>回数</th><th>学習</th><th>検証</th><th>判定</th></tr>
+      <tr><td>E のみ（比較用）</td><td>342/219</td><td class="up">+1.9%</td><td class="up">+1.3%</td><td>—</td></tr>
+      <tr><td><b>E＋WaveTrend上向き</b></td><td>259/165</td><td class="up"><b>+2.9%</b></td><td class="up"><b>+2.1%</b></td><td><b>採用（加点）</b></td></tr>
+      <tr><td>E＋UT Botの上</td><td>194/122</td><td class="up">+1.6%</td><td class="up">+3.5%</td><td>参考（数字を変えて未確認）</td></tr>
+      <tr><td>E＋Hull上向き</td><td>151/101</td><td class="up">+6.0%</td><td class="up">+1.8%</td><td>不採用（下記）</td></tr>
+      <tr><td>E＋SuperTrend上昇中</td><td>77/82</td><td>−0.2%</td><td>−0.1%</td><td>不採用</td></tr>
+      <tr><td>E＋Squeeze勢い上向き</td><td>99/55</td><td>−0.7%</td><td class="up">+6.3%</td><td>不採用</td></tr>
+      <tr><td>E＋一目 雲の上</td><td>21/33</td><td>+1.2%</td><td>+0.5%</td><td>回数が少なすぎ</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>数字（パラメーター）を変えても崩れないかも確認しました。</b>SuperTrendは標準の(10,3)のほか(14,3)(20,3)でも両期間プラスでしたが、(7,2)(10,2)(10,4)では前半がマイナス。「倍率3」の時だけ効くので、<b>効果は中程度の信頼</b>です。</li>
+      <li>E＋WaveTrendは(9,21)(10,21)(12,26)の3通りすべてで両期間ともEより良くなりました（+2.9〜3.2%／+2.1〜2.3%）。<b>一番安定した改善</b>です。</li>
+      <li>E＋Hullは標準の55では良かったものの、34では前半マイナス、89では後半マイナスと、数字を少し変えるだけで崩れたので不採用。</li>
+      <li><b>D（週高値ブレイク）は、今回のデータでは前半 −4.2%／後半 +1.4%</b>と、前回（+8.9%／+1.8%）から大きく変わりました。回数が少なく不安定なので、点数を下げて「参考」にしました。</li>
+      <li>人気の指標も、大半は「上げ相場で勝ち、横ばいで負ける」トレンド系で、単独ではランダムと大差ありませんでした。<b>人気＝儲かるではない</b>ことが確認できました。</li>
+    </ul></div>
+
     <h2>総まとめ：インジケーターの取捨選択（v7）</h2>
     <div class="card big">
       <p>これまで試した候補を、<b>同じデータ（先物のある131銘柄・2026年4月〜9月）・同じ売り方（1週間保有＋損切り「1日の値動き×3」）</b>でもう一度まとめて比べ直しました。前半（〜7/18）＝学習、後半＝検証。数字は「ランダムに買った場合より1回あたり何%良かったか」です。</p>
@@ -310,7 +341,9 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-help" class="help" hidden>
-    <h2>シグナル（v7で使うのは E と D の2つだけ）</h2>
+    <h2>シグナル（v8：E・G が中心、D は参考）</h2>
+    <p><b>v8の変更：</b>E（50点、さらに4時間足のWaveTrendが上向きなら+15点）、<b>G SuperTrend買い転換</b>（25点・新規）、D（15点に下げて参考扱い）。GitHub人気指標6つの検証結果は「過去検証」タブにあります。</p>
+    <ul><li><b>G SuperTrend 買い転換</b>：4時間足のSuperTrend（ATR10本×3倍）が下落→上昇に切り替わった時。売り方は他と同じく「1週間保有＋損切り（1日の値動き×3）」。</li><li><b>WaveTrend</b>：価格の行き過ぎ具合を表す指標。2本の線の速い方が遅い方より上＝上向き。</li></ul>
     <p><b>v7の方針：</b>E（点数50）と D（点数30）だけを使います。A・B・C・F は検証で安定した効果が確認できなかったため停止しました（下の説明は記録として残しています）。買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は各−10点、24時間で+30%以上の高騰済みは−20点です。</p>
     <ul>
       <li><b>A 1時間出来高急増</b>：直近1時間の売買金額が、その前24時間の平均の4倍以上。なのに価格はその1時間で0〜+5%、24時間で+15%未満（まだ大きく動いていない）。</li>
@@ -377,7 +410,7 @@ function feat(d,ps,i){
 const SIG={
   D:x=>x.brk168&&x.dvr>=2.5&&x.r24<0.2,
 };
-const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇"}, SIGPT={D:30,E:50,F:0};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇",G:"G SuperTrend買い転換"}, SIGPT={D:15,E:50,F:0,G:25};
 function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
 
 async function scan(){
@@ -392,7 +425,7 @@ async function scan(){
       return {pair:t.currency_pair,base:b,last:+t.last,ch24:+t.change_percentage,qv24:+t.quote_volume,st:!!inf.st_tag,status:inf.trade_status,buy:+inf.buy_start||0}})
       .filter(u=>!EXCLUDE.has(u.base)&&!/\d[LS]$/.test(u.base)&&(!u.status||u.status==="tradable")&&(u.qv24>=MIN_QV||wl.has(u.base)||u.base==="BTC"));
     await pool(uni,async u=>{
-      const d=conv(await get(`/spot/candlesticks?currency_pair=${u.pair}&interval=1h&limit=240`));
+      const d=conv(await get(`/spot/candlesticks?currency_pair=${u.pair}&interval=1h&limit=400`));
       const n=d.length-2; // 最後の足は未確定なので、その1本前までを使う
       if(n<200){u.ok=false;return} u.ok=true; const ps=prefix(d);
       u.sig={}; u.reasons=[]; u.tags=[]; u.score=0;
@@ -416,7 +449,11 @@ async function scan(){
           if(false){ u.sig.F={ago:0}; u.score+=SIGPT.F; u.reasons.push(`F OBV先行上昇：価格は20本（約3日）で${((g[K].c/g[K-20].c-1)*100).toFixed(1)}%と横ばいなのに、出来高の買い越しが${(ob/vs20*100).toFixed(0)}%（+${SIGPT.F}）`); }
           if(u.rsi4<30){u.score-=10;u.tags.push("RSI30未満");u.reasons.push("4時間足RSIが30未満＝検証では買うと不利（−10）")}
           if(u.adxDn){u.score-=10;u.tags.push("下落トレンド(ADX)");u.reasons.push("4時間足ADXが強い下落トレンド＝検証では買うと不利（−10）")}
-          if(u.bbDn){u.score-=10;u.tags.push("BB下抜け");u.reasons.push("4時間足でボリンジャーバンド下限を割った＝検証では買うと不利（−10）")} } }
+          if(u.bbDn){u.score-=10;u.tags.push("BB下抜け");u.reasons.push("4時間足でボリンジャーバンド下限を割った＝検証では買うと不利（−10）")}
+          { let at=NaN,sa=0,fu=NaN,fl=NaN,dir=1,flipK=-99; for(let k=1;k<=K;k++){ const tr=Math.max(g[k].h-g[k].l,Math.abs(g[k].h-g[k-1].c),Math.abs(g[k].l-g[k-1].c)); if(k<=10){sa+=tr; if(k===10) at=sa/10;} else at=(at*9+tr)/10;
+              if(k>10){ const m=(g[k].h+g[k].l)/2, bu=m+3*at, bl=m-3*at; const nfu=(isNaN(fu)||bu<fu||g[k-1].c>fu)?bu:fu, nfl=(isNaN(fl)||bl>fl||g[k-1].c<fl)?bl:fl; const pd=dir; if(dir===1&&g[k].c<nfl) dir=-1; else if(dir===-1&&g[k].c>nfu) dir=1; if(pd===-1&&dir===1) flipK=k; fu=nfu; fl=nfl; } }
+            u.stUp=dir===1; if(dir===1&&K-flipK<=1&&u.qv24>=THIN_QV){ const ago=(K-flipK)*4+1; u.sig.G={ago}; u.score+=SIGPT.G*(K===flipK?1:0.8); u.reasons.push(`G SuperTrend(10,3) 買い転換：4時間足で下落→上昇に切り替わった（約${ago}時間前）。GitHub人気指標の検証で唯一、両期間でランダムより良かった（+${SIGPT.G}）`); } }
+          { const em=(arr,n)=>{const a=2/(n+1); let e=NaN; return arr.map(v=>(e=isNaN(e)?v:e+a*(v-e)));}; const ap=g.map(x=>(x.h+x.l+x.c)/3); const esa=em(ap,10); const de=em(ap.map((v,i)=>Math.abs(v-esa[i])),10); const ci=ap.map((v,i)=>de[i]>0?(v-esa[i])/(0.015*de[i]):0); const w1=em(ci,21); const w2=(w1[K]+w1[K-1]+w1[K-2]+w1[K-3])/4; u.wtUp=w1[K]>w2; } } }
     },6,(k,n)=>setP(0.05+0.8*k/n,`1時間足を取得中 ${k}/${n}`));
     uni=uni.filter(u=>u.ok); if(!uni.length) throw new Error("データが取得できませんでした");
     uni.sort((a,b)=>b.score-a.score);
@@ -429,7 +466,7 @@ async function scan(){
         let liq=0; for(let k=n-24;k<n;k++) liq+=(+st[k].long_liq_usd||0)+(+st[k].short_liq_usd||0);
         if(o24>0) u.oi_ch24=+((oi/o24-1)*100).toFixed(1);
         if(o72>0&&oi>0){ u.oi_ch72=+((oi/o72-1)*100).toFixed(1); u.liq24=liq/oi;
-          if(u.liq24<0.001&&oi/o72-1<-0.05&&u.ch7<0&&u.qv24>=THIN_QV){ u.sig.E={ago:0}; u.score+=SIGPT.E; u.reasons.push(`E 落ち着き：24hの清算は建玉の${(u.liq24*100).toFixed(2)}%、建玉は3日で${u.oi_ch72}%、価格は1週間で${u.ch7}%。1週間保有向け（+${SIGPT.E}）`); }
+          if(u.liq24<0.001&&oi/o72-1<-0.05&&u.ch7<0&&u.qv24>=THIN_QV){ u.sig.E={ago:0}; u.score+=SIGPT.E; if(u.wtUp){u.score+=15;u.reasons.push("＋WaveTrend上向き（4時間足）：Eと組み合わせると検証で成績が上がった（+15）")} u.reasons.push(`E 落ち着き：24hの清算は建玉の${(u.liq24*100).toFixed(2)}%、建玉は3日で${u.oi_ch72}%、価格は1週間で${u.ch7}%。1週間保有向け（+${SIGPT.E}）`); }
           if(oi/o72-1>=0.3){u.score-=10;u.tags.push("レバレッジ急増");u.reasons.push(`建玉が3日で+${u.oi_ch72}%＝過去検証ではその後弱い傾向（−10）`)}
           if(u.liq24>=0.02){u.score-=10;u.tags.push("清算多発");u.reasons.push(`24時間の清算が建玉の${(u.liq24*100).toFixed(1)}%＝過去検証ではその後弱い傾向（−10）`)} } }
       if(u.funding>=0.1){u.score-=10;u.tags.push("過熱");u.reasons.push(`資金調達率${u.funding.toFixed(3)}%＝買いが過熱（−10）`)}
@@ -457,7 +494,7 @@ function card(u,i){const w=Math.max(0,Math.min(100,u.score));
    <span class="sym"><a href="https://www.gate.com/trade/${esc(u.pair)}" target="_blank" rel="noopener">${esc(u.base)}</a></span>${spark(u.spark)}
    <div class="score"><b>${u.score}</b> 点<div class="bar"><i style="width:${w}%"></i></div></div></div>
    <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST|レバレッジ|清算|RSI30|下落トレンド|BB下抜け/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
-   ${(u.sig&&(u.sig.E||u.sig.D))?`<div class="meta" style="margin-top:4px">手仕舞いの目安：<b>1週間後に売る</b>／損切り <b>−${u.stopPct}%</b>（買値から。1日の値動き×3）＝ ${price(u.last*(1-u.stopPct/100))} 付近</div>`:""}
+   ${(u.sig&&(u.sig.E||u.sig.D||u.sig.G))?`<div class="meta" style="margin-top:4px">手仕舞いの目安：<b>1週間後に売る</b>／損切り <b>−${u.stopPct}%</b>（買値から。1日の値動き×3）＝ ${price(u.last*(1-u.stopPct/100))} 付近</div>`:""}
    <div class="nums"><div><span>価格</span> ${price(u.last)}</div><div><span>1時間</span> ${pct(u.r1)}</div><div><span>24時間</span> ${pct(u.ch24)}</div><div><span>7日</span> ${pct(u.ch7)}</div>
    <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>RSI(4h)</span> ${u.rsi4??"—"}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
    <div><span>建玉3日</span> ${u.oi_ch72!=null?pct(u.oi_ch72,0):(u.has_futures?"—":"先物なし")}</div><div><span>24h清算/建玉</span> ${u.liq24!=null?(u.liq24*100).toFixed(2)+"%":"—"}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
