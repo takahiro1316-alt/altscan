@@ -55,7 +55,7 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版 v9）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v10）</h1>
   <div class="meta" id="meta">データ取得前</div>
   <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。これまでの検証で効果が確認できた<b>E（落ち着き）＋WaveTrendの確認</b>と、GitHubで人気の指標から唯一残った<b>G（SuperTrend買い転換）</b>を中心にしています。売り方は「1週間保有＋損切り（1日の値動き×3）」、買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は減点します。両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
@@ -84,6 +84,46 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
+    <h2>動画のチャート形状をすべて使った検証（v10）</h2>
+    <div class="card big">
+      <p><b>動画の画面から読み取ったチャート（金 XAUUSD）：</b></p>
+      <ol>
+        <li><b>負け（逆行）</b>：強い上昇の途中で「高値切り下げのダブルトップ」に見えて売り → そのまま上昇して損切り。原因は環境認識（上位足の移動平均線が抵抗にならなかった）。</li>
+        <li><b>引き分け（レンジ）</b>：下落のあとの「ダブルボトム」で買い。目標はネックラインより上の「前の戻り高値」。横ばいになり±0で撤退。</li>
+        <li><b>負け（レンジ）</b>：上昇のあとの「きれいなダブルトップ」で売り、損切りは高値のすぐ上 → 横ばい中に一瞬高値を抜けて損切り。</li>
+        <li><b>引き分け（勝ち寄り）</b>：「安値切り下げのダブルボトム」で買い、ネックラインは超えたが、上にある下向きの長期線で止まって横ばい。</li>
+        <li><b>勝ち（順行）</b>：上昇のあとの「高値切り下げのダブルトップ」で、短期線を割った所で売り → 大きく下落。</li>
+        <li><b>負け（順行なのに）</b>：高値圏のレンジで売り → 一度高値を抜けて損切りされてから急落（騙し）。</li>
+        <li><b>解説</b>：同じ高さの高値が何回も並ぶ所（トリプルトップなど）は、売った人の損切り注文が真上にたまる → 大口がそこを狩る → その後に下がる。<b>きれいな形ほど騙しを待つ／いびつな形は騙しが出にくいので早めに入る</b>。</li>
+      </ol>
+      <p><b>ルールにした内容：</b>1時間足・15分足で、底（天井）の形を「ダブル（同じ高さ）」「トリプル」「逆三尊（三尊）」「安値切り上げ（高値切り下げ）」「安値切り下げ（高値切り上げ）」の5つに自動で分類。手前にATR（1本の平均的な値幅）の3倍以上の下落（上昇）があることが条件。入り方は、きれいな形は騙しを待つ、いびつな形は短期線（20本）を抜けた所で早めに入る。損切りは形の底（騙しの先端）の少し先。</p>
+      <p><b>利確（どこまで伸ばすか）：</b>固定のリスクリワードではなく、<b>ネックライン・下落の起点・200本移動平均線・形の高さ分の値幅</b>のうち「リスクの2倍以上取れる一番近い所」を目標にし、取れる幅がなければ入らない、としました。Gate先物の上位40銘柄、手数料込み。</p>
+    </div>
+    <div class="tw"><table class="wrapt">
+      <tr><th>形（1時間足）</th><th>買い 学習／検証</th><th>売り 学習／検証</th></tr>
+      <tr><td>ランダム（比較用・利確リスク3倍）</td><td>−0.33%／+0.18%</td><td>+0.30%／+0.04%</td></tr>
+      <tr><td>ダブル（同じ高さ）</td><td>−0.31%／+0.06%</td><td>+0.27%／−0.23%</td></tr>
+      <tr><td>トリプル</td><td>−0.21%／+0.01%</td><td>+0.43%／−0.06%</td></tr>
+      <tr><td>逆三尊（三尊）</td><td class="down">−0.39%／−0.69%</td><td>−0.13%／+0.16%</td></tr>
+      <tr><td>安値切り上げ（高値切り下げ）</td><td>−0.35%／−0.04%</td><td>+0.46%／+0.06%</td></tr>
+      <tr><td>安値切り下げ（高値切り上げ）</td><td>−0.48%／+0.04%</td><td>+0.63%／−0.02%</td></tr>
+    </table></div>
+    <div class="tw" style="margin-top:10px"><table class="wrapt">
+      <tr><th>利確の決め方（全部の形・1時間足・買い）</th><th>学習</th><th>検証</th></tr>
+      <tr><td>固定：リスクの1.5倍</td><td>−0.36%</td><td>−0.17%</td></tr>
+      <tr><td>固定：リスクの3倍</td><td>−0.40%</td><td>−0.04%</td></tr>
+      <tr><td>形の高さ分の値幅</td><td>−0.41%</td><td>−0.06%</td></tr>
+      <tr><td><b>形に合わせる（2倍以上取れる一番近い節目）</b></td><td>−0.38%</td><td>−0.09%</td></tr>
+      <tr><td>建値に移して短期線割れまで伸ばす</td><td>−0.30%</td><td>−0.05%</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>結論：どの形もランダムに入った場合と大差なく、学習・検証の両方でランダムを上回る形はありませんでした。</b>15分足も同じです（買いの形 −0.01〜−0.21%／検証 −0.15〜+0.06%、ランダム −0.18%／+0.08%）。</li>
+      <li>売りが学習期間でプラスなのは、その期間にアルトが全体的に下がっていたためで、ランダムに売っても同じくらいプラスでした（形の力ではありません）。</li>
+      <li>利確を「伸ばす」（1.5倍→3倍以上・節目まで）と、1.5倍固定より少し良くなりましたが、これはランダムに入っても同じ傾向で、手数料を超えるほどではありませんでした。</li>
+      <li>「きれいな形は騙しを待つ」は、15分足の買いで早めに入るより少し良い（−0.11%／−0.01% 対 −0.23%／−0.04%）という点だけ動画と一致。「いびつな形は早めに入る方が良い」は確認できませんでした。</li>
+      <li>金（XAU）単独は回数が少なすぎて（1時間足で約70回）判断できません。</li>
+    </ul></div>
+
     <h2>YouTube動画の手法「騙しを待ってから入る」の検証（v9）</h2>
     <div class="card big">
       <p><b>動画の主張（要約）：</b>上位足の移動平均線や過去の高値・安値など「重要な価格」で反転を狙う。ただし<b>重要な価格や、きれいなダブルトップ／ボトムほど、大口が損切り注文を狩りにくる「騙し」が起きやすい</b>。だから、きれいな形ほど早く入らず、騙しを警戒する。</p>
@@ -362,7 +402,7 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 
   <section id="p-help" class="help" hidden>
     <h2>シグナル（v9：E・G が中心、D・S は参考）</h2>
-    <p><b>v9の追加：</b><b>S 騙し後の反転（動画手法・参考）</b>＝1時間足で48時間の安値を一度割ってから、同じ足で戻した時。検証では手数料込みでマイナスだったため<b>0点（表示のみ）</b>です。</p>
+    <p><b>v10の変更：</b><b>S チャート形状（動画手法・参考）</b>＝1時間足でダブルボトム・トリプルボトム・逆三尊・安値切り上げ／切り下げを見つけ、動画のとおり「きれいな形は騙しを待つ／いびつな形は早めに入る」で判定。利確は形に合わせて（ネックライン・下落の起点・200本線・形の値幅のうち、リスクの2倍以上取れる一番近い所）。検証ではランダムと差がなかったため<b>0点（表示のみ）</b>です。</p>
     <p><b>v8の変更：</b>E（50点、さらに4時間足のWaveTrendが上向きなら+15点）、<b>G SuperTrend買い転換</b>（25点・新規）、D（15点に下げて参考扱い）。GitHub人気指標6つの検証結果は「過去検証」タブにあります。</p>
     <ul><li><b>G SuperTrend 買い転換</b>：4時間足のSuperTrend（ATR10本×3倍）が下落→上昇に切り替わった時。売り方は他と同じく「1週間保有＋損切り（1日の値動き×3）」。</li><li><b>WaveTrend</b>：価格の行き過ぎ具合を表す指標。2本の線の速い方が遅い方より上＝上向き。</li></ul>
     <p><b>v7の方針：</b>E（点数50）と D（点数30）だけを使います。A・B・C・F は検証で安定した効果が確認できなかったため停止しました（下の説明は記録として残しています）。買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は各−10点、24時間で+30%以上の高騰済みは−20点です。</p>
@@ -431,7 +471,7 @@ function feat(d,ps,i){
 const SIG={
   D:x=>x.brk168&&x.dvr>=2.5&&x.r24<0.2,
 };
-const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇",G:"G SuperTrend買い転換",S:"S 騙し後の反転（動画手法・参考）"}, SIGPT={D:15,E:50,F:0,G:25,S:0};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇",G:"G SuperTrend買い転換",S:"S チャート形状（動画手法・参考）"}, SIGPT={D:15,E:50,F:0,G:25,S:0};
 function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
 
 async function scan(){
@@ -460,14 +500,32 @@ async function scan(){
       if(u.qv24<THIN_QV){u.score-=5;u.tags.push("低流動性")}
       if(u.buy&&now-u.buy<14*86400) u.tags.push(`新規上場${Math.round((now-u.buy)/86400)}日`);
       if(u.st){u.score-=20;u.tags.push("ST(警告銘柄)")}
-      { // S：48時間の安値を一瞬割ってから戻した（ストップ狩り＝騙しの後）。点数には入れない
-        const atrAt=i=>{ let a=0; for(let j=i-13;j<=i;j++) a+=Math.max(d[j][3]-d[j][4],Math.abs(d[j][3]-d[j-1][2]),Math.abs(d[j][4]-d[j-1][2])); return a/14; };
-        for(let k=0;k<3&&!u.sig.S;k++){ const i=n-k; let L=Infinity; for(let j=i-48;j<=i-3;j++) L=Math.min(L,d[j][4]);
-          if(!(d[i-1][4]>=L&&d[i-2][4]>=L&&d[i][4]<L&&d[i][2]>L)) continue; const A=atrAt(i-1); let touch=0;
-          for(let j=i-46;j<=i-3;j++){ const lo=d[j][4]; if(lo-L<=0.25*A&&lo<=d[j-1][4]&&lo<=d[j-2][4]&&lo<=d[j+1][4]&&lo<=d[j+2][4]) touch++; }
-          const stop=d[i][4]-0.1*A, ent=d[i][2], tp=ent+1.5*(ent-stop); if(!(u.last>stop)) continue; // もう損切りラインを割っていたら出さない
-          u.sig.S={ago:k+1,stop,tp,clean:touch>=2};
-          u.reasons.push(`S 騙し後の反転（動画手法）：${k+1}時間前、48時間の安値 ${price(L)} を一度割ってから戻した${touch>=2?"（2回以上止められた“きれいな”安値＝騙しが起きやすい所）":""}。目安：損切り ${price(stop)}、利確 ${price(tp)}（リスクの1.5倍）、24時間で手仕舞い。検証では手数料込みでマイナス＝点数には入れていません`); } }
+      { // S：ましろ動画のチャート形状（底の形）＋入り方＋形に合わせた目標値。点数には入れない
+        const H=j=>d[j][3], Lo=j=>d[j][4], C=j=>d[j][2];
+        const atr=[0]; {let a=0; for(let j=1;j<=n;j++){ const tr=Math.max(H(j)-Lo(j),Math.abs(H(j)-C(j-1)),Math.abs(Lo(j)-C(j-1))); a=j<=14?(a*(j-1)+tr)/j:(a*13+tr)/14; atr[j]=a; }}
+        const e20=[C(0)]; for(let j=1;j<=n;j++) e20[j]=e20[j-1]+(2/21)*(C(j)-e20[j-1]);
+        let s200=NaN; if(n>=199){ let sm=0; for(let j=n-199;j<=n;j++) sm+=C(j); s200=sm/200; }
+        const pk=3, pl=[]; for(let j=Math.max(pk,n-200);j<=n-pk;j++){ let lo=true; for(let q=1;q<=pk;q++){ if(Lo(j)>Lo(j-q)||Lo(j)>=Lo(j+q)) lo=false; } if(lo) pl.push(j); }
+        for(let k=0;k<3&&!u.sig.S;k++){ const i=n-k; const conf=pl.filter(j=>j+pk<=i); if(conf.length<2) continue; const A=atr[i-1];
+          const j2=conf[conf.length-1]; if(i-j2>30) continue;
+          let j1=-1; for(let q=conf.length-2;q>=0;q--){ const jj=conf[q]; if(j2-jj<5) continue; if(j2-jj>60) break; j1=jj; break; } if(j1<0) continue;
+          let nk=-Infinity; for(let q=j1;q<=j2;q++) nk=Math.max(nk,H(q)); const L1=Lo(j1),L2=Lo(j2),sup=Math.min(L1,L2);
+          let top=-Infinity; for(let q=Math.max(0,j1-40);q<=j1;q++) top=Math.max(top,H(q));
+          if(top-L1<3*A||nk-sup<1.5*A) continue;
+          let j0=-1; for(let q=conf.length-1;q>=0;q--){ const jj=conf[q]; if(jj>=j1) continue; if(j1-jj<5) continue; if(j1-jj>60) break; j0=jj; break; }
+          const df=L2-L1; let sh;
+          if(j0>=0&&Math.abs(Lo(j0)-L1)<=0.4*A&&Math.abs(df)<=0.4*A) sh="triple"; else if(j0>=0&&L1<Lo(j0)-0.5*A&&L1<L2-0.5*A&&Math.abs(Lo(j0)-L2)<=0.6*A) sh="ihs"; else if(Math.abs(df)<=0.4*A) sh="equal"; else if(df>0.4*A&&L2<nk-0.3*(nk-L1)) sh="higher"; else if(df<-0.4*A) sh="lower"; else continue;
+          const clean=sh==="equal"||sh==="triple"||sh==="ihs"; let stop, how;
+          if(clean){ if(!(Lo(i)<sup&&C(i)>sup)) continue; stop=Lo(i)-0.1*A; how="きれいな形なので、騙し（一度下に抜けてから戻る動き）を待って買う"; }
+          else { if(!(C(i)>e20[i]&&C(i-1)<=e20[i-1]&&C(i)<nk&&Lo(i)>=sup)) continue; stop=L2-0.2*A; how="いびつな形なので騙しは出にくい→短期線（20本の移動平均）を上に抜けた所で早めに買う"; }
+          const ent=C(i), R=ent-stop; if(!(R>0)||!(u.last>stop)) continue;
+          const mm=nk+(nk-sup); const lv=[[nk,"ネックライン"],[top,"下落が始まった高値"],[s200,"200本移動平均線"],[mm,"形の高さ分の値幅"]].filter(x=>isFinite(x[0])&&x[0]>ent).sort((a,b)=>a[0]-b[0]);
+          const t=lv.find(x=>x[0]-ent>=2*R); if(!t) continue; // リスクの2倍以上取れる所がなければ出さない
+          const block=lv.find(x=>x[0]<t[0]&&x[1]==="200本移動平均線");
+          const nm={equal:"ダブルボトム",triple:"トリプルボトム",ihs:"逆三尊",higher:"安値切り上げのダブルボトム",lower:"安値切り下げ（一度下抜け）"}[sh];
+          u.sig.S={ago:k+1,stop,tp:t[0],rr:(t[0]-ent)/R,shape:nm,tname:t[1]};
+          u.reasons.push(`S チャート形状（動画手法）：${k+1}時間前に「${nm}」。${how}。損切り ${price(stop)}（${clean?"騙しの安値":"2つ目の底"}の少し下）、利確 ${price(t[0])}（${t[1]}まで＝リスクの${((t[0]-ent)/R).toFixed(1)}倍）${block?"。途中に200本移動平均線があり、そこで止まりやすい":""}。最長4日で手仕舞い。検証ではランダムに買うのと差がなかったため、点数には入れていません`);
+        } }
       { const g=[]; for(let e=n;e-3>=0;e-=4){ let hh=-Infinity,ll=Infinity,vv=0; for(let j=e-3;j<=e;j++){hh=Math.max(hh,d[j][3]);ll=Math.min(ll,d[j][4]);vv+=d[j][1];} g.unshift({o:d[e-3][5],h:hh,l:ll,c:d[e][2],v:vv}); }
         const K=g.length-1;
         if(K>=40){ let ag=0,al=0; for(let k=1;k<=K;k++){ const df=g[k].c-g[k-1].c, gg=df>0?df:0, ls=df<0?-df:0; if(k<=14){ag+=gg/14;al+=ls/14}else{ag=(ag*13+gg)/14;al=(al*13+ls)/14} } u.rsi4=+(100-100/(1+ag/(al||1e-12))).toFixed(0);
@@ -524,7 +582,7 @@ function card(u,i){const w=Math.max(0,Math.min(100,u.score));
    <div class="score"><b>${u.score}</b> 点<div class="bar"><i style="width:${w}%"></i></div></div></div>
    <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST|レバレッジ|清算|RSI30|下落トレンド|BB下抜け/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
    ${(u.sig&&(u.sig.E||u.sig.D||u.sig.G))?`<div class="meta" style="margin-top:4px">手仕舞いの目安：<b>1週間後に売る</b>／損切り <b>−${u.stopPct}%</b>（買値から。1日の値動き×3）＝ ${price(u.last*(1-u.stopPct/100))} 付近</div>`:""}
-   ${(u.sig&&u.sig.S)?`<div class="meta" style="margin-top:4px">S（参考）の目安：損切り <b>${price(u.sig.S.stop)}</b>／利確 <b>${price(u.sig.S.tp)}</b>／24時間で手仕舞い</div>`:""}
+   ${(u.sig&&u.sig.S)?`<div class="meta" style="margin-top:4px">S（参考）${u.sig.S.shape}：損切り <b>${price(u.sig.S.stop)}</b>／利確 <b>${price(u.sig.S.tp)}</b>（${u.sig.S.tname}・リスクの${u.sig.S.rr.toFixed(1)}倍）／最長4日</div>`:""}
    <div class="nums"><div><span>価格</span> ${price(u.last)}</div><div><span>1時間</span> ${pct(u.r1)}</div><div><span>24時間</span> ${pct(u.ch24)}</div><div><span>7日</span> ${pct(u.ch7)}</div>
    <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>RSI(4h)</span> ${u.rsi4??"—"}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
    <div><span>建玉3日</span> ${u.oi_ch72!=null?pct(u.oi_ch72,0):(u.has_futures?"—":"先物なし")}</div><div><span>24h清算/建玉</span> ${u.liq24!=null?(u.liq24*100).toFixed(2)+"%":"—"}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
