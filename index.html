@@ -465,7 +465,7 @@ async function scan(){
         for(let k=0;k<3&&!u.sig.S;k++){ const i=n-k; let L=Infinity; for(let j=i-48;j<=i-3;j++) L=Math.min(L,d[j][4]);
           if(!(d[i-1][4]>=L&&d[i-2][4]>=L&&d[i][4]<L&&d[i][2]>L)) continue; const A=atrAt(i-1); let touch=0;
           for(let j=i-46;j<=i-3;j++){ const lo=d[j][4]; if(lo-L<=0.25*A&&lo<=d[j-1][4]&&lo<=d[j-2][4]&&lo<=d[j+1][4]&&lo<=d[j+2][4]) touch++; }
-          const stop=d[i][4]-0.1*A, ent=d[i][2], tp=ent+1.5*(ent-stop);
+          const stop=d[i][4]-0.1*A, ent=d[i][2], tp=ent+1.5*(ent-stop); if(!(u.last>stop)) continue; // もう損切りラインを割っていたら出さない
           u.sig.S={ago:k+1,stop,tp,clean:touch>=2};
           u.reasons.push(`S 騙し後の反転（動画手法）：${k+1}時間前、48時間の安値 ${price(L)} を一度割ってから戻した${touch>=2?"（2回以上止められた“きれいな”安値＝騙しが起きやすい所）":""}。目安：損切り ${price(stop)}、利確 ${price(tp)}（リスクの1.5倍）、24時間で手仕舞い。検証では手数料込みでマイナス＝点数には入れていません`); } }
       { const g=[]; for(let e=n;e-3>=0;e-=4){ let hh=-Infinity,ll=Infinity,vv=0; for(let j=e-3;j<=e;j++){hh=Math.max(hh,d[j][3]);ll=Math.min(ll,d[j][4]);vv+=d[j][1];} g.unshift({o:d[e-3][5],h:hh,l:ll,c:d[e][2],v:vv}); }
