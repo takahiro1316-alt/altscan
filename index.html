@@ -55,7 +55,7 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
 </head>
 <body>
 <div class="wrap">
-  <h1>アルト初動スキャナー（Gate.io・短期版 v8）</h1>
+  <h1>アルト初動スキャナー（Gate.io・短期版 v9）</h1>
   <div class="meta" id="meta">データ取得前</div>
   <div class="alert">保有期間1時間〜1週間向け。「いつもと違う動き」が出た銘柄の一覧で、値上がりの予言ではありません。これまでの検証で効果が確認できた<b>E（落ち着き）＋WaveTrendの確認</b>と、GitHubで人気の指標から唯一残った<b>G（SuperTrend買い転換）</b>を中心にしています。売り方は「1週間保有＋損切り（1日の値動き×3）」、買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は減点します。両期間でランダムより良い成績でしたが、統計的にはまだ「偶然の可能性を否定できない」レベルです（「過去検証」タブ）。投資は自己責任で、失っても困らない金額だけにしてください。</div>
   <div class="tabs">
@@ -84,6 +84,26 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-bt" hidden>
+    <h2>YouTube動画の手法「騙しを待ってから入る」の検証（v9）</h2>
+    <div class="card big">
+      <p><b>動画の主張（要約）：</b>上位足の移動平均線や過去の高値・安値など「重要な価格」で反転を狙う。ただし<b>重要な価格や、きれいなダブルトップ／ボトムほど、大口が損切り注文を狩りにくる「騙し」が起きやすい</b>。だから、きれいな形ほど早く入らず、騙しを警戒する。</p>
+      <p><b>機械的なルールに置き換えた内容：</b>過去48本の安値（高値）を「重要な価格」とし、①<b>素直に入る</b>＝その価格に触れた所で買う（売る）、②<b>騙しを待つ</b>＝一度割ってから同じ足で戻した所で買う（売る）、の2つを比べました。損切りは騙しの先端の少し先、利確はリスクの1.5倍、最長24本で手仕舞い。安値の近くで2回以上止められていれば「きれい」としました。Gate先物の出来高上位40銘柄（金 XAU を含む）、1時間足 約416日／15分足 約104日、手数料など往復0.12%込み。前半＝学習／後半＝検証。</p>
+    </div>
+    <div class="tw"><table class="wrapt">
+      <tr><th>15分足・買い（1回あたり平均）</th><th>回数</th><th>学習</th><th>検証</th></tr>
+      <tr><td>ランダムに買う（比較用）</td><td>4564/3044</td><td class="down">−0.12%</td><td class="down">−0.10%</td></tr>
+      <tr><td>①素直に入る・きれいな安値</td><td>282/188</td><td class="down">−0.16%</td><td class="down">−0.13%</td></tr>
+      <tr><td>①素直に入る・いびつな安値</td><td>742/495</td><td class="down">−0.16%</td><td class="down">−0.13%</td></tr>
+      <tr><td><b>②騙しを待つ・きれいな安値</b></td><td>586/391</td><td class="down">−0.11%</td><td class="down">−0.05%</td></tr>
+      <tr><td><b>②騙しを待つ・いびつな安値</b></td><td>1519/1014</td><td class="down">−0.09%</td><td class="down">−0.03%</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>動画の主張と一致した点：</b>買いでは「素直に入る」が一番悪く、「騙しを待つ」の方がランダムより少し良い結果でした。1時間足でも、きれいな安値で素直に買うと特に成績が悪く（−0.32%／−0.39%）、「きれいな形ほど狩られる」は一定程度確認できました。</li>
+      <li><b>ただし、どの組み合わせも手数料を引くとマイナスでした。</b>手数料を0にしても1回あたり+0.1%未満で、学習期間ではほぼゼロ。売り側、1時間足、上位足の移動平均線（200本）の近くに限定した場合、金（XAU）だけの場合も、プラスで安定する組み合わせはありませんでした。</li>
+      <li>そのためアプリでは <b>S「騙し後の反転（参考）」として表示だけ</b>し、点数には入れていません（1時間足で、48時間の安値を割って戻した銘柄に出ます）。</li>
+      <li><b>注意：</b>動画の手法には「環境認識」「プライスアクションのセンス」など裁量の部分が多く、ルールに置き換えきれていません。今回の結果は「機械的にまねした場合は儲からない」という意味で、配信者本人の成績を否定・確認するものではありません。</li>
+    </ul></div>
+
     <h2>GitHub・TradingViewで人気の6指標の検証（v8）</h2>
     <div class="card big">
       <p><b>方法：</b>SuperTrend、Squeeze Momentum（LazyBear）、WaveTrend（LazyBear）、UT Bot、一目均衡表、Hull移動平均の6つを、公開されている計算式どおりに4時間足で再現しました（<b>未来のデータを使わないよう</b>、雲の位置なども確定済みの値だけ使用）。①単独の買いサインとして、②Eシグナルに足す「ふるい」として、それぞれ試しました。先物のある132銘柄・2026年4〜9月、売り方は「1週間保有＋損切り（1日の値動き×3）」、数字は<b>ランダムに買った場合との差</b>（前半＝学習／後半＝検証）です。</p>
@@ -341,7 +361,8 @@ input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radi
   </section>
 
   <section id="p-help" class="help" hidden>
-    <h2>シグナル（v8：E・G が中心、D は参考）</h2>
+    <h2>シグナル（v9：E・G が中心、D・S は参考）</h2>
+    <p><b>v9の追加：</b><b>S 騙し後の反転（動画手法・参考）</b>＝1時間足で48時間の安値を一度割ってから、同じ足で戻した時。検証では手数料込みでマイナスだったため<b>0点（表示のみ）</b>です。</p>
     <p><b>v8の変更：</b>E（50点、さらに4時間足のWaveTrendが上向きなら+15点）、<b>G SuperTrend買い転換</b>（25点・新規）、D（15点に下げて参考扱い）。GitHub人気指標6つの検証結果は「過去検証」タブにあります。</p>
     <ul><li><b>G SuperTrend 買い転換</b>：4時間足のSuperTrend（ATR10本×3倍）が下落→上昇に切り替わった時。売り方は他と同じく「1週間保有＋損切り（1日の値動き×3）」。</li><li><b>WaveTrend</b>：価格の行き過ぎ具合を表す指標。2本の線の速い方が遅い方より上＝上向き。</li></ul>
     <p><b>v7の方針：</b>E（点数50）と D（点数30）だけを使います。A・B・C・F は検証で安定した効果が確認できなかったため停止しました（下の説明は記録として残しています）。買ってはいけないサイン（RSI30未満・ADX下落・BB下抜け・レバレッジ急増・清算多発）は各−10点、24時間で+30%以上の高騰済みは−20点です。</p>
@@ -410,7 +431,7 @@ function feat(d,ps,i){
 const SIG={
   D:x=>x.brk168&&x.dvr>=2.5&&x.r24<0.2,
 };
-const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇",G:"G SuperTrend買い転換"}, SIGPT={D:15,E:50,F:0,G:25};
+const SIGNAME={A:"A 1時間出来高急増",B:"B 静かな買い集め",C:"C 72h高値ブレイク",D:"D 週高値ブレイク＋出来高",E:"E 落ち着き（1週間保有）",F:"F OBV先行上昇",G:"G SuperTrend買い転換",S:"S 騙し後の反転（動画手法・参考）"}, SIGPT={D:15,E:50,F:0,G:25,S:0};
 function prefix(d){const ps=[0]; for(const x of d) ps.push(ps[ps.length-1]+x[1]); return ps;}
 
 async function scan(){
@@ -439,6 +460,14 @@ async function scan(){
       if(u.qv24<THIN_QV){u.score-=5;u.tags.push("低流動性")}
       if(u.buy&&now-u.buy<14*86400) u.tags.push(`新規上場${Math.round((now-u.buy)/86400)}日`);
       if(u.st){u.score-=20;u.tags.push("ST(警告銘柄)")}
+      { // S：48時間の安値を一瞬割ってから戻した（ストップ狩り＝騙しの後）。点数には入れない
+        const atrAt=i=>{ let a=0; for(let j=i-13;j<=i;j++) a+=Math.max(d[j][3]-d[j][4],Math.abs(d[j][3]-d[j-1][2]),Math.abs(d[j][4]-d[j-1][2])); return a/14; };
+        for(let k=0;k<3&&!u.sig.S;k++){ const i=n-k; let L=Infinity; for(let j=i-48;j<=i-3;j++) L=Math.min(L,d[j][4]);
+          if(!(d[i-1][4]>=L&&d[i-2][4]>=L&&d[i][4]<L&&d[i][2]>L)) continue; const A=atrAt(i-1); let touch=0;
+          for(let j=i-46;j<=i-3;j++){ const lo=d[j][4]; if(lo-L<=0.25*A&&lo<=d[j-1][4]&&lo<=d[j-2][4]&&lo<=d[j+1][4]&&lo<=d[j+2][4]) touch++; }
+          const stop=d[i][4]-0.1*A, ent=d[i][2], tp=ent+1.5*(ent-stop);
+          u.sig.S={ago:k+1,stop,tp,clean:touch>=2};
+          u.reasons.push(`S 騙し後の反転（動画手法）：${k+1}時間前、48時間の安値 ${price(L)} を一度割ってから戻した${touch>=2?"（2回以上止められた“きれいな”安値＝騙しが起きやすい所）":""}。目安：損切り ${price(stop)}、利確 ${price(tp)}（リスクの1.5倍）、24時間で手仕舞い。検証では手数料込みでマイナス＝点数には入れていません`); } }
       { const g=[]; for(let e=n;e-3>=0;e-=4){ let hh=-Infinity,ll=Infinity,vv=0; for(let j=e-3;j<=e;j++){hh=Math.max(hh,d[j][3]);ll=Math.min(ll,d[j][4]);vv+=d[j][1];} g.unshift({o:d[e-3][5],h:hh,l:ll,c:d[e][2],v:vv}); }
         const K=g.length-1;
         if(K>=40){ let ag=0,al=0; for(let k=1;k<=K;k++){ const df=g[k].c-g[k-1].c, gg=df>0?df:0, ls=df<0?-df:0; if(k<=14){ag+=gg/14;al+=ls/14}else{ag=(ag*13+gg)/14;al=(al*13+ls)/14} } u.rsi4=+(100-100/(1+ag/(al||1e-12))).toFixed(0);
@@ -495,6 +524,7 @@ function card(u,i){const w=Math.max(0,Math.min(100,u.score));
    <div class="score"><b>${u.score}</b> 点<div class="bar"><i style="width:${w}%"></i></div></div></div>
    <div>${sigTags}${(u.tags||[]).map(t=>`<span class="tag ${/高騰|低流動|過熱|ST|レバレッジ|清算|RSI30|下落トレンド|BB下抜け/.test(t)?"bad":""}">${esc(t)}</span>`).join("")}</div>
    ${(u.sig&&(u.sig.E||u.sig.D||u.sig.G))?`<div class="meta" style="margin-top:4px">手仕舞いの目安：<b>1週間後に売る</b>／損切り <b>−${u.stopPct}%</b>（買値から。1日の値動き×3）＝ ${price(u.last*(1-u.stopPct/100))} 付近</div>`:""}
+   ${(u.sig&&u.sig.S)?`<div class="meta" style="margin-top:4px">S（参考）の目安：損切り <b>${price(u.sig.S.stop)}</b>／利確 <b>${price(u.sig.S.tp)}</b>／24時間で手仕舞い</div>`:""}
    <div class="nums"><div><span>価格</span> ${price(u.last)}</div><div><span>1時間</span> ${pct(u.r1)}</div><div><span>24時間</span> ${pct(u.ch24)}</div><div><span>7日</span> ${pct(u.ch7)}</div>
    <div><span>24h出来高</span> ${usd(u.qv24)}</div><div><span>RSI(4h)</span> ${u.rsi4??"—"}</div><div><span>1h出来高倍率</span> <b>${u.hvr??"—"}倍</b></div><div><span>24h出来高倍率</span> ${u.dvr??"—"}倍</div>
    <div><span>建玉3日</span> ${u.oi_ch72!=null?pct(u.oi_ch72,0):(u.has_futures?"—":"先物なし")}</div><div><span>24h清算/建玉</span> ${u.liq24!=null?(u.liq24*100).toFixed(2)+"%":"—"}</div><div><span>FR</span> ${u.funding!=null?u.funding.toFixed(4)+"%":"—"}</div></div>
