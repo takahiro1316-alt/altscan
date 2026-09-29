@@ -54,7 +54,7 @@ th{color:var(--sub);font-weight:600;vertical-align:bottom}
 <div class="wrap">
   <h1>RSIシグナル（時価総額上位20・Gate.io 1時間足）</h1>
   <div class="meta" id="meta">データ取得前</div>
-  <div class="alert">YouTube動画で紹介された2つの手法（①RSI＋ボリンジャーバンド＋反転足、②RSIダイバージェンス＋MACD）を、そのまま機械的に判定するページです。<b>過去の検証では、ランダムに入った場合を上回ったのは「②の売り」だけで、それも偶然の可能性を否定できない程度でした</b>（「検証結果」タブ）。投資の助言ではありません。</div>
+  <div class="alert">YouTube動画で紹介された2つの手法（①RSI＋ボリンジャーバンド＋反転足、②RSIダイバージェンス＋MACD）を、そのまま機械的に判定するページです。動画どおりの設定では、ランダムに入った場合を上回ったのは「②の売り」だけでした。そこで数字を約4万通り試し、<b>過去13か月の3つの期間すべてでプラスだった設定を「最適化版」</b>として表示しています。ただし過去に合わせ込んだ（カーブフィット）結果なので、将来も同じ成績になる保証はありません（「検証結果」タブ）。投資の助言ではありません。</div>
   <div class="tabs" id="tabs">
     <button data-t="sig" class="on">シグナル</button><button data-t="bt">検証結果</button><button data-t="help">手法の説明</button>
   </div>
@@ -90,10 +90,33 @@ th{color:var(--sub);font-weight:600;vertical-align:bottom}
       <li><b>銘柄別に見ると、②売りのプラスはアルト（XLM・NEAR・ADA・ZECなど）から来ていて、BTC・ETH・SOLではマイナス</b>でした。動画の例のビットコインだけで試すと、①②とも回数が少なく（20〜70回）、プラスは確認できません。</li>
       <li>学習期間はアルトが全体に下がった時期で、ランダムに売ってもプラスでした。②売りの成績の一部は「相場全体が下がっていたおかげ」の可能性があります。</li>
     </ul></div>
+    <h2>利益を最大化する数字の探索（最適化）</h2>
+    <div class="card">
+      <p><b>方法：</b>①②の買い・売りそれぞれで、RSIの基準・待つ本数・損切りの位置・利確の倍率・最長保有時間・「損切りを買値に移す」ルール・200本移動平均線（長期の流れ）による絞り込みなど、約4万通りの組み合わせを試しました。</p>
+      <p><b>① まず正しいやり方（学習期間で選んで、残りで確かめる）：</b>学習期間（〜2026年4月）で一番もうかった設定は、検証期間ではすべてマイナスになりました（例：②売りは学習 +610% → 検証 −111%、①売りは +999% → −54%。いずれも1回ごとの損益の合計）。学習期間で上位100に入った設定でも、検証でプラスだったのは7〜28個だけ。<b>数字を過去に合わせるほど、未来では外れる</b>という典型的な結果です。</p>
+      <p><b>② カーブフィットを許して、全期間に合わせる：</b>期間をA（2025年8月〜2026年2月中旬・20銘柄平均−42%の下げ相場）、B（〜2026年7月・−7%）、C（2026年8〜9月・+65%の上げ相場）の3つに分け、<b>「一番悪い期間の成績」が最大になる設定</b>を選びました（1つの相場だけで稼ぐ設定を避けるため）。</p>
+    </div>
+    <div class="tw"><table>
+      <tr><th>最適化版</th><th>回数（A/B/C）</th><th>1回平均（A/B/C）</th><th>勝率</th></tr>
+      <tr><td>① 買い</td><td>167/99/18</td><td class="up">+0.13/+0.20/+0.34%</td><td>38〜50%</td></tr>
+      <tr><td>① 売り</td><td>122/199/72</td><td class="up">+0.99/+0.39/+0.35%</td><td>51〜53%</td></tr>
+      <tr><td>② 買い</td><td>83/84/22</td><td class="up">+0.31/+0.41/+0.52%</td><td>33〜40%</td></tr>
+      <tr><td>② 売り</td><td>122/126/68</td><td class="up">+0.74/+0.50/+0.33%</td><td>18〜28%</td></tr>
+      <tr><td><b>4つ合計</b></td><td>1182回</td><td class="up"><b>+0.44%</b></td><td>—</td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>資金に直すと：</b>同時に持つ数は最大14件だったので、資金を14等分して1件ずつ（レバレッジなし）入れた場合、13.4か月で<b>+37%（月あたり約+2.8%）、途中の最大の落ち込みは−5%</b>でした。レバレッジを2倍にすれば利益も損失もほぼ2倍になります。</li>
+      <li><b>手数料を2倍（往復0.24%）にしても、4つとも3期間すべてプラス</b>でした。</li>
+      <li><b>数字を1段階ずらした「近くの設定」</b>でも、55〜74%は3期間すべてプラスでした（①売り10/14、②売り14/19、①買い10/17、②買い9/16）。1点だけが突出して良い設定ではない、という意味で少し安心材料です。</li>
+      <li>最適化版の主な特徴：②売りは<b>損切りを直近5本の高値</b>にして<b>利確を4倍</b>と遠くし、1倍進んだら損切りを売値へ移す（勝率は約2割と低いが、勝つと大きい）。①売りは<b>RSI60以上</b>から準備し、帯を2.5倍に広げ、利確1.5倍・最長3日。売りの2つと①買いは<b>200本移動平均線より価格が上（①買いは下）の時だけ</b>。</li>
+      <li>参考：もっと合わせ込むと、「②買い（上昇相場で稼ぐ）＋①売り（下げ相場で稼ぐ）」の組み合わせが、各期間の合計で月+47%と一番大きくなりました。ただしこれは、それぞれ片方の相場で大負けしている設定を組み合わせて相殺しているだけなので、採用していません。</li>
+    </ul></div>
+
     <h2>懸念点</h2>
     <div class="card"><ul>
       <li>動画は「ロス・キャメロンの手法」と紹介していますが、本人の手法という根拠は見当たりません（キャメロン氏は米国小型株のモメンタム・デイトレーダーとして知られ、会社は2022年に誇大な宣伝で米国連邦取引委員会（FTC）と約300万ドルで和解しています）。</li>
       <li>「包み足」「2つ目の底は帯の内側」などは見る人で判断がぶれます。このページの判定は私が決めた1通りの解釈で、動画の作者の判断と一致するとは限りません。</li>
+      <li><b>最適化版は、過去13か月に合わせ込んだ設定です。</b>約4万通りから選んでいるので、偶然うまくいった設定を選んでいる可能性が高く、正しいやり方（学習→検証）では全く通用しませんでした。実際の成績は、この表よりかなり悪くなると考えてください。少額で試し、成績が悪ければやめる前提で使ってください。</li>
       <li>先物の売り（空売り）は、価格が急騰すると損失が膨らみます。レバレッジをかけると、損切りが間に合わず強制決済されることもあります。</li>
     </ul></div>
   </section>
@@ -123,11 +146,27 @@ th{color:var(--sub);font-weight:600;vertical-align:bottom}
       </ol>
       <p><b>買い：</b>上の逆（安値更新なのにRSIの谷は切り上がり→ゴールデンクロス→陽線の包み足）。</p>
     </div>
+    <h2>最適化版の数字</h2>
+    <div class="tw"><table>
+      <tr><th>項目</th><th>① 買い</th><th>① 売り</th><th>② 買い</th><th>② 売り</th></tr>
+      <tr><td>RSIの基準</td><td>20以下</td><td>60以上</td><td>谷のRSI 45以下</td><td>山のRSI 65以上</td></tr>
+      <tr><td>ボリンジャーバンド</td><td>1.5倍</td><td>2.5倍</td><td>—</td><td>—</td></tr>
+      <tr><td>ピークの形</td><td>陰線3本のみ</td><td>どちらでも</td><td>—</td><td>—</td></tr>
+      <tr><td>2つ目の底／山</td><td>帯の外も可</td><td>帯の外も可</td><td>—</td><td>—</td></tr>
+      <tr><td>待つ本数</td><td>96本</td><td>12本</td><td>クロスまで12本・包み足まで3本</td><td>クロスまで36本・陰線まで3本</td></tr>
+      <tr><td>反転の足</td><td>陽線2本目</td><td>陰線2本目</td><td>陽線の包み足</td><td>陰線ならOK</td></tr>
+      <tr><td>損切り</td><td>2つ目の底の下</td><td>帯の上限</td><td>直近20本の安値</td><td>直近5本の高値</td></tr>
+      <tr><td>利確</td><td>1.5倍</td><td>1.5倍</td><td>5倍</td><td>4倍</td></tr>
+      <tr><td>損切りを建値へ</td><td>なし</td><td>1.5倍進んだら</td><td>なし</td><td>1倍進んだら</td></tr>
+      <tr><td>最長保有</td><td>72時間</td><td>72時間</td><td>72時間</td><td>168時間</td></tr>
+      <tr><td>200本線</td><td>価格が下の時だけ</td><td>価格が上の時だけ</td><td>条件なし</td><td>価格が上の時だけ</td></tr>
+    </table></div>
+
     <h2>画面の見方</h2>
     <div class="card"><ul>
       <li>確定した1時間足だけで判定します（今動いている足は使いません）。</li>
       <li><b>黄色の枠</b>＝直近3時間以内に売買の条件がそろったもの。「進行中」＝途中の段階まで来ているもの。</li>
-      <li>「直近の点灯」は、取得した約40日分の中で過去に条件がそろった場面と、その結果です。</li>
+      <li>「直近の点灯」は、取得した約33日分の中で過去に条件がそろった場面と、その結果です。</li>
     </ul></div>
   </section>
 </div>
@@ -142,81 +181,99 @@ async function get(u){ for(let a=0;a<4;a++){ try{ const r=await fetch(u); if(r.s
 const price=v=>v==null||!isFinite(v)?"—":v>=1000?v.toLocaleString("ja-JP",{maximumFractionDigits:1}):v>=1?v.toFixed(4):v.toPrecision(4);
 const pct=v=>(v>=0?"+":"")+v.toFixed(2)+"%";
 // ---- 指標 ----
-function IND(d){ const n=d.length, c=d.map(b=>b[4]);
+function IND(d,bbK=2){ const n=d.length, c=d.map(b=>b[4]);
  const rsi=new Float64Array(n).fill(NaN); {let ag=0,al=0; for(let i=1;i<n;i++){ const df=c[i]-c[i-1], g=df>0?df:0, l=df<0?-df:0; if(i<=14){ag+=g/14;al+=l/14; if(i===14) rsi[i]=100-100/(1+ag/(al||1e-12));} else {ag=(ag*13+g)/14; al=(al*13+l)/14; rsi[i]=100-100/(1+ag/(al||1e-12));} }}
- const bbm=new Float64Array(n).fill(NaN), bbu=new Float64Array(n).fill(NaN), bbl=new Float64Array(n).fill(NaN);
- for(let i=19;i<n;i++){ let s=0,s2=0; for(let j=i-19;j<=i;j++){s+=c[j];s2+=c[j]*c[j];} const m=s/20, sd=Math.sqrt(Math.max(0,s2/20-m*m)); bbm[i]=m; bbu[i]=m+2*sd; bbl[i]=m-2*sd; }
+ const bbl=new Float64Array(n).fill(NaN), bbu=new Float64Array(n).fill(NaN); for(let i=19;i<n;i++){ let s=0,s2=0; for(let j=i-19;j<=i;j++){s+=c[j];s2+=c[j]*c[j];} const m=s/20, sd=Math.sqrt(Math.max(0,s2/20-m*m)); bbl[i]=m-bbK*sd; bbu[i]=m+bbK*sd; }
  const ema=p=>{ const e=new Float64Array(n); const k=2/(p+1); e[0]=c[0]; for(let i=1;i<n;i++) e[i]=e[i-1]+k*(c[i]-e[i-1]); return e; };
- const e12=ema(12), e26=ema(26); const macd=new Float64Array(n); for(let i=0;i<n;i++) macd[i]=e12[i]-e26[i]; const sig=new Float64Array(n); {const k=0.2; sig[0]=macd[0]; for(let i=1;i<n;i++) sig[i]=sig[i-1]+k*(macd[i]-sig[i-1]);}
+ const e12=ema(12), e26=ema(26); const macd=new Float64Array(n); for(let i=0;i<n;i++) macd[i]=e12[i]-e26[i]; const sig=new Float64Array(n); {sig[0]=macd[0]; for(let i=1;i<n;i++) sig[i]=sig[i-1]+0.2*(macd[i]-sig[i-1]);}
  const atr=new Float64Array(n); {let a=0; for(let i=1;i<n;i++){ const tr=Math.max(d[i][2]-d[i][3],Math.abs(d[i][2]-c[i-1]),Math.abs(d[i][3]-c[i-1])); a=i<=14?(a*(i-1)+tr)/i:(a*13+tr)/14; atr[i]=a; }}
- return {rsi,bbm,bbu,bbl,macd,sig,atr}; }
+ return {rsi,bbl,bbu,macd,sig,atr,e200:ema(200)}; }
 const bull=(d,i)=>d[i][4]>d[i][1], bear=(d,i)=>d[i][4]<d[i][1];
 const engulfUp=(d,i)=>bear(d,i-1)&&bull(d,i)&&d[i][4]>=d[i-1][1]&&d[i][1]<=d[i-1][4];
-function EXIT(d,i,ent,stop,rr,T){ const R=ent-stop, tp=ent+rr*R; const last=d.length-1; let ex=null,k,how="保有中";
- for(k=i+1;k<=Math.min(last,i+T);k++){ if(d[k][3]<=stop){ex=Math.min(stop,d[k][1]);how="損切り";break} if(d[k][2]>=tp){ex=tp;how="利確";break} }
- if(ex==null&&i+T<=last){ ex=d[i+T][4]; how="1週間で手仕舞い"; k=i+T; }
- return {ex,k,how,tp}; }
+// 決済：損切り／利確（損切り幅のrr倍）／be倍進んだら損切りを買値へ／最長T本
+function EXIT(d,i,ent,stop,rr,T,be){ const R=ent-stop, tp=ent+rr*R; const last=d.length-1; let st=stop, ex=null,k,how="保有中";
+ for(k=i+1;k<=Math.min(last,i+T);k++){ if(d[k][3]<=st){ex=Math.min(st,d[k][1]);how=st>stop?"建値で撤退":"損切り";break} if(d[k][2]>=tp){ex=tp;how="利確";break} if(be&&d[k][2]-ent>=be*R) st=Math.max(st,ent); }
+ if(ex==null&&i+T<=last){ ex=d[i+T][4]; how="期限で手仕舞い"; k=i+T; }
+ return {ex,k,how,tp,st}; }
 // ---- 手法①（買いの向きで計算。売りは価格を反転して同じ関数を使う）----
-function M1(d,I,{stopMode="bb",rr=2,T=168}={}){ const n=d.length, out=[]; let st=0,t0=0,B1=Infinity,bounceHi=-Infinity,B2=Infinity,iB2=-1,cntBull=0,busy=0;
- for(let i=30;i<n;i++){ if(i<busy) continue; const A=I.atr[i];
-  if(st>0&&i-t0>48){st=0;}
-  if(st===0){ if(I.rsi[i]<=30){ st=1; t0=i; B1=Infinity; } else continue; }
+function M1(d,I,{rsiTh=30,W=48,tol=0.5,stopMode="bb",rr=2,T=168,climax="either",inside=true,be=0,trend=0}={}){ const n=d.length, out=[];
+ let st=0,t0=0,B1=Infinity,bounceHi=-Infinity,B2=Infinity,iB2=-1,cntBull=0,busy=0;
+ for(let i=210;i<n;i++){ if(i<busy) continue; const A=I.atr[i];
+  if(st>0&&i-t0>W){st=0;}
+  if(st===0){ if(I.rsi[i]<=rsiTh){ st=1; t0=i; B1=Infinity; } else continue; }
   if(st===1){ B1=Math.min(B1,d[i][3]); const touch=d[i][3]<=I.bbl[i]; const bear3=bear(d,i)&&bear(d,i-1)&&bear(d,i-2); const eng=engulfUp(d,i);
-    if(touch&&(bear3||eng)){ st=2; if(eng){ st=3; bounceHi=d[i][2]; B2=Infinity; iB2=-1; cntBull=0; } } continue; }
+    const okc=climax==="bear3"?bear3:climax==="eng"?eng:(bear3||eng);
+    if(touch&&okc){ st=2; if(eng){ st=3; bounceHi=d[i][2]; B2=Infinity; iB2=-1; cntBull=0; } } continue; }
   if(st===2){ B1=Math.min(B1,d[i][3]); if(engulfUp(d,i)){ st=3; bounceHi=d[i][2]; B2=Infinity; iB2=-1; cntBull=0; } continue; }
   if(st===3){ bounceHi=Math.max(bounceHi,d[i][2]);
     if(d[i][3]<B2){ B2=d[i][3]; iB2=i; cntBull=0;
-      if(d[i][3]<=I.bbl[i]){ B1=Math.min(B1,d[i][3]); st=2; continue; }
-      if(d[i][3]<B1-0.5*A){ st=2; B1=d[i][3]; continue; }
+      if(inside&&d[i][3]<=I.bbl[i]){ B1=Math.min(B1,d[i][3]); st=2; continue; }
+      if(d[i][3]<B1-tol*A){ st=2; B1=d[i][3]; continue; }
       continue; }
     if(iB2>0&&bull(d,i)){ cntBull++; if(cntBull===2){
         if(!(B2<bounceHi)){ st=0; continue; }
-        const ent=d[i][4]; const stop=stopMode==="bb"?I.bbl[i]:B2-0.1*A; if(!(stop<ent)){ st=0; continue; }
-        const x=EXIT(d,i,ent,stop,rr,T); out.push({i,t:d[i][0],ent,stop,...x}); busy=(x.k||n)+1; st=0; } } } }
- return {trades:out, state:{st, t0, cntBull, B2:isFinite(B2)?B2:null, since:n-1-t0}}; }
+        if(trend===1&&!(d[i][4]>I.e200[i])){ st=0; continue; } if(trend===-1&&!(d[i][4]<I.e200[i])){ st=0; continue; }
+        const ent=d[i][4]; const stop=stopMode==="bb"?I.bbl[i]:B2-0.1*A; if(!(stop<ent)||(ent-stop)/ent>0.2){ st=0; continue; }
+        const x=EXIT(d,i,ent,stop,rr,T,be); out.push({i,t:d[i][0],ent,stop,...x}); busy=(x.k||n)+1; st=0; } } } }
+ return {trades:out, state:{st, t0, cntBull, since:n-1-t0}}; }
 // ---- 手法② ----
-function M2(d,I,{pk=3,rr=2,T=168}={}){ const n=d.length, out=[]; const isPL=j=>{ for(let q=1;q<=pk;q++){ if(d[j][3]>d[j-q][3]||d[j][3]>=d[j+q][3]) return false; } return true; };
+function M2(d,I,{pk=3,maxGap=60,armW=24,engW=12,rsiMax=40,rr=2,T=168,needEng=true,sl=10,be=0,trend=0}={}){ const n=d.length, out=[];
+ const isPL=j=>{ for(let q=1;q<=pk;q++){ if(d[j][3]>d[j-q][3]||d[j][3]>=d[j+q][3]) return false; } return true; };
  let lastPL=[], busy=0, armed=-1, crossAt=-1, P2=-1;
- for(let i=40;i<n;i++){
-  const j=i-pk; if(j>pk&&isPL(j)){ lastPL.push(j); if(lastPL.length>5) lastPL.shift();
-    const P=lastPL.length>=2?lastPL[lastPL.length-2]:-1; if(P>0&&j-P>=5&&j-P<=60&&d[j][3]<d[P][3]&&I.rsi[j]>I.rsi[P]&&Math.min(I.rsi[P],I.rsi[j])<=40){ armed=i; P2=j; crossAt=-1; } }
+ for(let i=210;i<n;i++){
+  const j=i-pk; if(isPL(j)){ lastPL.push(j); if(lastPL.length>5) lastPL.shift();
+    const P=lastPL.length>=2?lastPL[lastPL.length-2]:-1; if(P>0&&j-P>=5&&j-P<=maxGap&&d[j][3]<d[P][3]&&I.rsi[j]>I.rsi[P]&&Math.min(I.rsi[P],I.rsi[j])<=rsiMax){ armed=i; P2=j; crossAt=-1; } }
   if(i<busy||armed<0) continue;
   if(d[i][3]<d[P2][3]){ armed=-1; continue; }
-  if(crossAt<0){ if(i-armed>24){armed=-1;continue} if(I.macd[i]>I.sig[i]&&I.macd[i-1]<=I.sig[i-1]) crossAt=i; else continue; }
-  if(i-crossAt>12){ armed=-1; continue; }
-  if(engulfUp(d,i)){ let lo=Infinity; for(let q=Math.max(0,i-10);q<=i;q++) lo=Math.min(lo,d[q][3]); const ent=d[i][4], stop=lo-0.1*I.atr[i]; if(stop<ent){ const x=EXIT(d,i,ent,stop,rr,T); out.push({i,t:d[i][0],ent,stop,...x}); busy=(x.k||n)+1; } armed=-1; } }
- return {trades:out, state:{armed:armed>=0, crossed:crossAt>=0, P2, since:armed>=0?n-1-armed:null}}; }
+  if(crossAt<0){ if(i-armed>armW){armed=-1;continue} if(I.macd[i]>I.sig[i]&&I.macd[i-1]<=I.sig[i-1]) crossAt=i; else continue; }
+  if(i-crossAt>engW){ armed=-1; continue; }
+  if(needEng?engulfUp(d,i):bull(d,i)){ if(trend===1&&!(d[i][4]>I.e200[i])){armed=-1;continue} if(trend===-1&&!(d[i][4]<I.e200[i])){armed=-1;continue}
+    let lo=Infinity; for(let q=Math.max(0,i-sl);q<=i;q++) lo=Math.min(lo,d[q][3]); const ent=d[i][4], stop=lo-0.1*I.atr[i]; if(stop<ent&&(ent-stop)/ent<0.2){ const x=EXIT(d,i,ent,stop,rr,T,be); out.push({i,t:d[i][0],ent,stop,...x}); busy=(x.k||n)+1; } armed=-1; } }
+ return {trades:out, state:{armed:armed>=0, crossed:crossAt>=0, since:armed>=0?n-1-armed:null}}; }
+// ---- 最適化した設定（2025/8〜2026/9の全期間に合わせたもの＝カーブフィット）----
+const OPT={
+ b2:{pk:2,maxGap:90,armW:12,engW:3,rsiMax:45,rr:5,T:72,needEng:true,sl:20,be:0,trend:0,bbK:2},
+ s2:{pk:3,maxGap:60,armW:36,engW:3,rsiMax:35,rr:4,T:168,needEng:false,sl:5,be:1,trend:-1,bbK:2},
+ b1:{rsiTh:20,W:96,tol:1,stopMode:"swing",rr:1.5,T:72,climax:"bear3",inside:false,be:0,trend:-1,bbK:1.5},
+ s1:{rsiTh:40,W:12,tol:1,stopMode:"bb",rr:1.5,T:72,climax:"either",inside:false,be:1.5,trend:-1,bbK:2.5}};
 const inv=d=>d.map(b=>[b[0],1/b[1],1/b[3],1/b[2],1/b[4],b[5]]);
 // ---- 判定 ----
-function analyze(d){ const n=d.length; const dI=inv(d); const I=IND(d), J=IND(dI); const res={};
- const conv=(x,side)=>side===1?x:{...x,ent:1/x.ent,stop:1/x.stop,tp:1/x.tp,ex:x.ex==null?null:1/x.ex};
- res.m1b=M1(d,I,{stopMode:"bb"}); res.m1s=M1(dI,J,{stopMode:"swing"}); res.m2b=M2(d,I); res.m2s=M2(dI,J);
- for(const [k,side] of [["m1b",1],["m1s",-1],["m2b",1],["m2s",-1]]) res[k].trades=res[k].trades.map(x=>({...conv(x,side),ret:x.ex==null?null:(x.ex/x.ent-1)}));
- return {I,res}; }
-const NAME={m1b:"① 買い",m1s:"① 売り",m2b:"② 買い",m2s:"② 売り"};
-const NOTE={m1b:"検証：ランダム以下",m1s:"検証：ランダムとほぼ同じ",m2b:"検証：ランダム以下",m2s:"検証：両期間でランダムを上回る（根拠は弱い）"};
-function stageText(key,r,side){ const s=r.state; const up=side===1; if(key.startsWith("m1")){
+function analyze(d){ const dI=inv(d); const I={}, J={}; for(const k of [1.5,2,2.5]){ I[k]=IND(d,k); J[k]=IND(dI,k); } const res={};
+ const conv=(x,side)=>side===1?x:{...x,ent:1/x.ent,stop:1/x.stop,tp:1/x.tp,st:1/x.st,ex:x.ex==null?null:1/x.ex};
+ res.m1b=M1(d,I[2],{}); res.m1s=M1(dI,J[2],{stopMode:"swing"}); res.m2b=M2(d,I[2],{}); res.m2s=M2(dI,J[2],{});
+ res.o2b=M2(d,I[OPT.b2.bbK],OPT.b2); res.o2s=M2(dI,J[OPT.s2.bbK],OPT.s2); res.o1b=M1(d,I[OPT.b1.bbK],OPT.b1); res.o1s=M1(dI,J[OPT.s1.bbK],OPT.s1);
+ for(const k in res){ const side=k.endsWith("b")?1:-1; res[k].trades=res[k].trades.map(x=>conv(x,side)); }
+ return {I:I[2],res}; }
+const NAME={m1b:"① 買い（動画どおり）",m1s:"① 売り（動画どおり）",m2b:"② 買い（動画どおり）",m2s:"② 売り（動画どおり）",o1b:"① 買い【最適化版】",o1s:"① 売り【最適化版】",o2b:"② 買い【最適化版】",o2s:"② 売り【最適化版】"};
+const RRT={m1b:[2,168],m1s:[2,168],m2b:[2,168],m2s:[2,168],o1b:[OPT.b1.rr,OPT.b1.T],o1s:[OPT.s1.rr,OPT.s1.T],o2b:[OPT.b2.rr,OPT.b2.T],o2s:[OPT.s2.rr,OPT.s2.T]};
+const KEYS=["o2s","o1s","o2b","o1b","m2s","m2b","m1s","m1b"];
+const OPTNOTE="全期間に合わせた最適化（カーブフィット）版：過去3期間すべてプラスだったが、将来も同じとは限らない";
+const NOTE={m1b:"検証：ランダム以下",m1s:"検証：ランダムとほぼ同じ",m2b:"検証：ランダム以下",m2s:"検証：両期間でランダムを上回る（根拠は弱い）",o1b:OPTNOTE+"（価格が200本線より下の時だけ）",o1s:OPTNOTE+"（価格が200本線より上の時だけ）",o2b:OPTNOTE,o2s:OPTNOTE+"（価格が200本線より上の時だけ）"};
+const TH={m1b:"30以下",m1s:"70以上",o1b:"20以下",o1s:"60以上"};
+function stageText(key,r,side){ const s=r.state; const up=side===1; if(key[1]==="1"){
   if(s.st===0) return null;
-  if(s.st===1) return `RSIが${up?"30以下":"70以上"}になった（${s.since}時間前）：バンドの${up?"下限":"上限"}タッチ＋${up?"陰線3本か陽線":"陽線3本か陰線"}の包み足を待っています`;
+  if(s.st===1) return `RSIが${TH[key]}になった（${s.since}時間前）：バンドの${up?"下限":"上限"}タッチ＋${up?"陰線3本か陽線":"陽線3本か陰線"}の包み足を待っています`;
   if(s.st===2) return `${up?"売り":"買い"}のピークを確認：1回目の${up?"陽線":"陰線"}の包み足（見送り）を待っています`;
   if(s.st===3) return `1回目の反発済み：帯の内側で2つ目の${up?"底":"山"}→${up?"陽線":"陰線"}2本目を待っています（今${s.cntBull}本）`; }
  else { if(!s.armed) return null; return s.crossed?`ダイバージェンス→MACDの${up?"ゴールデン":"デッド"}クロス済み：${up?"陽線":"陰線"}の包み足を待っています`:`ダイバージェンス発生（${s.since}時間前）：MACDの${up?"ゴールデン":"デッド"}クロスを待っています`; } }
 let DATA=[];
 function render(){ const only=$("#onlyHot").checked; const L=$("#list"); L.replaceChildren();
- const rows=DATA.filter(x=>x.ok).map(x=>{ const hot=[], prog=[]; for(const k of ["m2s","m2b","m1s","m1b"]){ const r=x.res[k]; const side=k.endsWith("b")?1:-1; const last=r.trades[r.trades.length-1]; if(last&&last.i>=x.n-3&&last.how==="保有中") hot.push({k,side,tr:last}); const st=stageText(k,r,side); if(st) prog.push({k,side,st}); } return {...x,hot,prog}; })
-  .sort((a,b)=>(b.hot.length-a.hot.length)||(b.hot.some(h=>h.k==="m2s")-a.hot.some(h=>h.k==="m2s"))||(b.prog.length-a.prog.length)||a.rank-b.rank);
+ const rows=DATA.filter(x=>x.ok).map(x=>{ const hot=[], prog=[]; for(const k of KEYS){ const r=x.res[k]; const side=k.endsWith("b")?1:-1; const last=r.trades[r.trades.length-1]; if(last&&last.i>=x.n-3&&last.how==="保有中") hot.push({k,side,tr:last}); const st=stageText(k,r,side); if(st) prog.push({k,side,st}); } return {...x,hot,prog}; })
+  .sort((a,b)=>(b.hot.length-a.hot.length)||(b.hot.some(h=>h.k[0]==="o")-a.hot.some(h=>h.k[0]==="o"))||(b.prog.length-a.prog.length)||a.rank-b.rank);
  let shown=0;
  for(const x of rows){ if(only&&!x.hot.length&&!x.prog.length) continue; shown++;
   const c=document.createElement("div"); c.className="card"+(x.hot.length?" hot":"");
   const I=x.I, n=x.n-1; const bbPos=(x.close-I.bbl[n])/((I.bbu[n]-I.bbl[n])||1);
   let h=`<div class="row"><span class="sym"><a href="https://www.gate.com/futures/USDT/${x.ct}" target="_blank" rel="noopener">${x.sym}</a></span><span class="meta">時価総額${x.rank}位</span><span class="px">${price(x.last)}<br><span class="${x.ch24>=0?"up":"down"}">${pct(x.ch24)}</span> <span class="meta">24h</span></span></div>`;
   h+=`<div class="nums"><div><span>RSI(14)</span> <b class="${I.rsi[n]<=30?"up":I.rsi[n]>=70?"down":""}">${I.rsi[n].toFixed(0)}</b></div><div><span>帯の中の位置（下限0%・上限100%）</span> ${(bbPos*100).toFixed(0)}%</div><div><span>MACD</span> ${I.macd[n]>I.sig[n]?"シグナルより上":"シグナルより下"}</div></div>`;
-  for(const hh of x.hot){ const t=hh.tr; h+=`<div class="st go"><b>${NAME[hh.k]}が点灯</b>（${x.n-1-t.i===0?"最新":(x.n-1-t.i)+"本前"}の確定足の終値 ${price(t.ent)}）損切り <b>${price(t.stop)}</b>／利確 <b>${price(t.tp)}</b>（損切り幅の2倍）／最長1週間<br><span class="meta">${NOTE[hh.k]}</span></div>`; }
-  for(const p of x.prog) if(!x.hot.some(hh=>hh.k===p.k)) h+=`<div class="st">進行中 ${NAME[p.k]}：${p.st}<br><span class="meta">${NOTE[p.k]}</span></div>`;
+  for(const hh of x.hot){ const t=hh.tr; h+=`<div class="st go"><b>${NAME[hh.k]}が点灯</b>（${x.n-1-t.i===0?"最新":(x.n-1-t.i)+"本前"}の確定足の終値 ${price(t.ent)}）損切り <b>${price(t.stop)}</b>／利確 <b>${price(t.tp)}</b>（損切り幅の${RRT[hh.k][0]}倍）／最長${RRT[hh.k][1]}時間<br><span class="meta">${NOTE[hh.k]}</span></div>`; }
+  const pO=x.prog.filter(p=>p.k[0]==="o"&&!x.hot.some(hh=>hh.k===p.k)), pM=x.prog.filter(p=>p.k[0]==="m"&&!x.hot.some(hh=>hh.k===p.k));
+  for(const p of pO) h+=`<div class="st">進行中 ${NAME[p.k]}：${p.st}</div>`;
+  if(pM.length) h+=`<details><summary>動画どおり版の進行状況（${pM.length}件）</summary>`+pM.map(p=>`<div class="st">${NAME[p.k]}：${p.st}<br><span class="meta">${NOTE[p.k]}</span></div>`).join("")+`</details>`;
   if(!x.hot.length&&!x.prog.length) h+=`<div class="meta">RSIが偏っておらず、どの手法も待機中（動画の考え方では「手を出さない」場面）</div>`;
-  const past=[]; for(const k of ["m1b","m1s","m2b","m2s"]) for(const t of x.res[k].trades) past.push({k,t}); past.sort((a,b)=>b.t.t-a.t.t);
-  if(past.length){ h+=`<details><summary>直近の点灯と結果（${past.length}件・約40日分）</summary><div class="tw" style="margin-top:6px"><table><tr><th>日時</th><th>手法</th><th>入った値</th><th>結果</th><th>損益</th></tr>`+
-    past.slice(0,12).map(({k,t})=>{ const r=t.ret==null?null:(k.endsWith("s")?(t.ent/t.ex-1):(t.ex/t.ent-1))-0.0012; return `<tr><td>${new Date(t.t*1000).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}</td><td>${NAME[k]}</td><td>${price(t.ent)}</td><td>${t.how}</td><td class="${r==null?"":r>=0?"up":"down"}">${r==null?"—":pct(r*100)}</td></tr>`; }).join("")+`</table></div></details>`; }
+  const past=[]; for(const k of KEYS) for(const t of x.res[k].trades) past.push({k,t}); past.sort((a,b)=>b.t.t-a.t.t);
+  if(past.length){ h+=`<details><summary>直近の点灯と結果（${past.length}件・約33日分）</summary><div class="tw" style="margin-top:6px"><table><tr><th>日時</th><th>手法</th><th>入った値</th><th>結果</th><th>損益</th></tr>`+
+    past.slice(0,15).map(({k,t})=>{ const r=t.ex==null?null:(k.endsWith("s")?(t.ent/t.ex-1):(t.ex/t.ent-1))-0.0012; return `<tr><td>${new Date(t.t*1000).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}</td><td>${NAME[k]}</td><td>${price(t.ent)}</td><td>${t.how}</td><td class="${r==null?"":r>=0?"up":"down"}">${r==null?"—":pct(r*100)}</td></tr>`; }).join("")+`</table></div></details>`; }
   c.innerHTML=h; L.appendChild(c); }
  if(!shown) L.innerHTML=`<div class="empty">今は点灯・進行中の銘柄がありません</div>`; }
 async function topList(){ try{ const j=await get("https://api.coinpaprika.com/v1/tickers?limit=80"); const out=[]; for(const c of j){ const s=String(c.symbol).toUpperCase(); if(!/^[A-Z0-9]{2,12}$/.test(s)) continue; if(STABLE.test(s)||WRAP.test(s)) continue; out.push({sym:s,rank:c.rank}); } return out; }catch(e){ return FALLBACK.map((s,i)=>({sym:s,rank:i+1})); } }
