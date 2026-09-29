@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RSIシグナル（上位20銘柄）</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16181d;--sub:#5b6270;--line:#e3e6eb;--up:#0f9d58;--down:#d93025;--accent:#2563eb;--warn:#b45309;--warnbg:#fff4e0;--good:#0f766e;--goodbg:#e2f5f1;--bad:#b91c1c;--badbg:#fde8e8;--hi:#fff8d6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#181b21;--ink:#e8eaee;--sub:#9aa2b1;--line:#2a2f38;--up:#34c77b;--down:#f2685f;--accent:#6ea0ff;--warn:#f0b35a;--warnbg:#3a2b12;--good:#4fd1c0;--goodbg:#10302c;--bad:#ff8a80;--badbg:#3a1714;--hi:#2e2a14}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0}
+h2{font-size:17px;margin:20px 0 8px}
+h3{font-size:15px;margin:14px 0 6px}
+.meta{color:var(--sub);font-size:13px}
+.alert{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin:12px 0}
+.tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.tabs button,.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:999px;font-size:14px;cursor:pointer}
+.tabs button.on,.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.card.hot{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sym{font-weight:700;font-size:17px}
+.sym a{color:inherit;text-decoration:none}
+.px{margin-left:auto;text-align:right;font-size:14px}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:4px 12px;margin:8px 0;font-size:13px}
+.nums span{color:var(--sub)}
+.up{color:var(--up)}.down{color:var(--down)}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;margin:2px 4px 2px 0;background:var(--line);color:var(--ink)}
+.tag.good{background:var(--goodbg);color:var(--good)}
+.tag.bad{background:var(--badbg);color:var(--bad)}
+.st{font-size:13px;margin:3px 0;padding:6px 8px;border-radius:8px;background:var(--bg)}
+.st b{font-weight:700}
+.st.go{background:var(--hi)}
+details{font-size:13px;margin-top:4px}
+summary{cursor:pointer;color:var(--accent)}
+ul,ol{margin:6px 0 0;padding-left:20px}
+.help p,.help li{font-size:14px}
+.empty{color:var(--sub);padding:20px;text-align:center}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:right}
+th:first-child,td:first-child{text-align:left;white-space:nowrap}
+th{color:var(--sub);font-weight:600;vertical-align:bottom}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
+@media (max-width:480px){table{font-size:12px}th,td{padding:5px 3px}.tw{padding:4px}}
+.filters{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--sub);margin-bottom:10px;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>RSIシグナル（時価総額上位20・Gate.io 1時間足）</h1>
+  <div class="meta" id="meta">データ取得前</div>
+  <div class="alert">YouTube動画で紹介された2つの手法（①RSI＋ボリンジャーバンド＋反転足、②RSIダイバージェンス＋MACD）を、そのまま機械的に判定するページです。<b>過去の検証では、ランダムに入った場合を上回ったのは「②の売り」だけで、それも偶然の可能性を否定できない程度でした</b>（「検証結果」タブ）。投資の助言ではありません。</div>
+  <div class="tabs" id="tabs">
+    <button data-t="sig" class="on">シグナル</button><button data-t="bt">検証結果</button><button data-t="help">手法の説明</button>
+  </div>
+
+  <section id="p-sig">
+    <div class="filters"><button class="btn primary" id="reload">最新データで判定</button><label><input type="checkbox" id="onlyHot"> 点灯・進行中だけ表示</label></div>
+    <div class="prog"><i id="bar"></i></div><div class="meta" id="progTxt"></div>
+    <div id="list"><div class="empty">読み込み中…</div></div>
+  </section>
+
+  <section id="p-bt" hidden>
+    <h2>検証の方法</h2>
+    <div class="card">
+      <ul>
+        <li><b>銘柄：</b>時価総額の上位20銘柄（ステーブルコインと、ETHやBTCを包んだだけのトークンは除外。Gate.ioに先物がないものも除外）＝BTC・ETH・BNB・XRP・SOL・TRX・ZEC・HYPE・DOGE・LINK・XMR・ADA・XLM・NEAR・BCH・UNI・LTC・CC・AVAX・SUI（2026年9月30日時点、CoinPaprika）。</li>
+        <li><b>データ：</b>Gate.ioの無期限先物、1時間足、2025年8月〜2026年9月（約416日。ZEC・XMR・CCは上場が遅く短め）。</li>
+        <li><b>費用：</b>手数料と滑り（思った値段で約定しないズレ）で往復0.12%を差し引き。</li>
+        <li><b>確かめ方：</b>期間の前半60%（〜2026年4月中旬）＝学習、後半40%＝検証。同じ損切り幅・同じ決済ルールで「ランダムな時刻に入った場合」と比べます（これより良くなければ、手法の力とは言えません）。</li>
+        <li><b>決済：</b>動画どおりリスクリワード1対2（損切り幅の2倍で利確）。どちらにも届かなければ最長1週間で手仕舞い。</li>
+      </ul>
+    </div>
+    <h2>結果（1回あたりの平均損益・手数料込み）</h2>
+    <div class="tw"><table>
+      <tr><th>手法</th><th>回数</th><th>勝率</th><th>学習</th><th>検証</th><th>ランダム<br>学習/検証</th><th>判定</th></tr>
+      <tr><td>① 買い</td><td>597/363</td><td>27%/38%</td><td class="down">−1.06%</td><td>+0.18%</td><td>−0.35/+0.21</td><td>劣る</td></tr>
+      <tr><td>① 売り</td><td>605/439</td><td>39%/33%</td><td>+0.22%</td><td class="down">−0.22%</td><td>+0.13/−0.14</td><td>同等</td></tr>
+      <tr><td>② 買い</td><td>223/124</td><td>34%/35%</td><td>−0.24%</td><td>−0.11%</td><td>−0.32/+0.18</td><td>劣る</td></tr>
+      <tr><td><b>② 売り</b></td><td>167/137</td><td>40%/39%</td><td class="up"><b>+0.52%</b></td><td class="up"><b>+0.53%</b></td><td>+0.30/−0.19</td><td><b>上回る<br>（弱い）</b></td></tr>
+    </table></div>
+    <div class="card" style="margin-top:10px"><ul>
+      <li><b>① RSI＋ボリンジャーバンド：</b>買いは学習期間でランダムよりかなり悪い結果でした。損切りを「バンドの下限」に置くと幅が狭く、勝率27%（損益ゼロに必要なのは約34%）にとどまりました。数字（RSI 25／35、包み足だけ／陰線3本だけ、利確1.5倍／3倍、帯の外の底も可 など）を変えても、両期間でランダムを上回る組み合わせはありませんでした。</li>
+      <li><b>② ダイバージェンス＋MACD の売り：</b>全期間で304回、平均+0.53%、勝率39%。学習・検証どちらもランダムより良く、数字（RSIの条件・待つ本数・利確倍率など15通り）を変えてもほぼプラスでした。ただし統計的な強さはt値2.0程度で、15通り試したことを考えると<b>偶然の可能性はまだ残ります</b>。</li>
+      <li><b>銘柄別に見ると、②売りのプラスはアルト（XLM・NEAR・ADA・ZECなど）から来ていて、BTC・ETH・SOLではマイナス</b>でした。動画の例のビットコインだけで試すと、①②とも回数が少なく（20〜70回）、プラスは確認できません。</li>
+      <li>学習期間はアルトが全体に下がった時期で、ランダムに売ってもプラスでした。②売りの成績の一部は「相場全体が下がっていたおかげ」の可能性があります。</li>
+    </ul></div>
+    <h2>懸念点</h2>
+    <div class="card"><ul>
+      <li>動画は「ロス・キャメロンの手法」と紹介していますが、本人の手法という根拠は見当たりません（キャメロン氏は米国小型株のモメンタム・デイトレーダーとして知られ、会社は2022年に誇大な宣伝で米国連邦取引委員会（FTC）と約300万ドルで和解しています）。</li>
+      <li>「包み足」「2つ目の底は帯の内側」などは見る人で判断がぶれます。このページの判定は私が決めた1通りの解釈で、動画の作者の判断と一致するとは限りません。</li>
+      <li>先物の売り（空売り）は、価格が急騰すると損失が膨らみます。レバレッジをかけると、損切りが間に合わず強制決済されることもあります。</li>
+    </ul></div>
+  </section>
+
+  <section id="p-help" hidden class="help">
+    <h2>手法①：RSI＋ボリンジャーバンド＋反転ローソク足</h2>
+    <div class="card">
+      <p><b>RSI</b>＝最近どれだけ買われた／売られたかを0〜100で表す指標。<b>ボリンジャーバンド</b>＝平均線の上下に引いた帯（価格の大半はこの中で動く）。<b>包み足</b>＝直前の足をまるごと包む大きな足。</p>
+      <p><b>買いの判定（このページのルール）：</b></p>
+      <ol>
+        <li>RSI（14本）が30以下になる → 準備開始（ここから48本以内に下の条件がそろわなければ取り消し）。</li>
+        <li>安値がバンド（20本・2倍）の下限に触れる／割る足で、「陰線3本連続」または「陽線の包み足」が出る＝売りのピーク。</li>
+        <li>その後の最初の陽線の包み足は<b>見送り</b>（1回目の反発）。</li>
+        <li>もう一度下げて2つ目の底をつける。2つ目の底は<b>帯の内側</b>で、1つ目の底より大きく（1本の平均値幅の0.5倍以上）下でないこと。</li>
+        <li>2つ目の底のあと<b>2本目の陽線の終値で買う</b>。損切り＝その時のバンド下限、利確＝損切り幅の2倍。</li>
+      </ol>
+      <p><b>売り：</b>上の逆（RSI70以上、バンド上限、ダブルトップの2つ目の山は帯の内側、陰線2本目の終値で売る）。損切りは2つ目の山の高値の少し上。</p>
+    </div>
+    <h2>手法②：RSIダイバージェンス＋MACD</h2>
+    <div class="card">
+      <p><b>ダイバージェンス</b>＝価格とRSIが逆に動くこと。<b>MACD</b>＝2本の移動平均線（12本・26本）の差で勢いを見る指標。MACD線がシグナル線（9本）を下から上に抜ける＝ゴールデンクロス、上から下＝デッドクロス。</p>
+      <p><b>売りの判定：</b></p>
+      <ol>
+        <li>価格は高値を更新（直近2つの山、5〜60本離れている）したのに、RSIの山は切り下がっている＝弱気のダイバージェンス（どちらかの山のRSIが60以上）。</li>
+        <li>その後24本以内にMACDのデッドクロス。</li>
+        <li>その後12本以内に陰線の包み足が出たら、<b>その終値で売る</b>。損切り＝直近10本の高値の少し上、利確＝損切り幅の2倍。途中で高値を更新したら取り消し。</li>
+      </ol>
+      <p><b>買い：</b>上の逆（安値更新なのにRSIの谷は切り上がり→ゴールデンクロス→陽線の包み足）。</p>
+    </div>
+    <h2>画面の見方</h2>
+    <div class="card"><ul>
+      <li>確定した1時間足だけで判定します（今動いている足は使いません）。</li>
+      <li><b>黄色の枠</b>＝直近3時間以内に売買の条件がそろったもの。「進行中」＝途中の段階まで来ているもの。</li>
+      <li>「直近の点灯」は、取得した約40日分の中で過去に条件がそろった場面と、その結果です。</li>
+    </ul></div>
+  </section>
+</div>
+<script>
+"use strict";
+const API="https://api.gateio.ws/api/v4";
+const FALLBACK=["BTC","ETH","BNB","XRP","SOL","TRX","ZEC","HYPE","DOGE","LINK","XMR","ADA","XLM","NEAR","BCH","UNI","LTC","CC","AVAX","SUI"];
+const STABLE=/^(USDT|USDC|USDS|SUSDS|DAI|USD1|USDE|USDG|PYUSD|FDUSD|TUSD|USDD|USDF|RLUSD|BUIDL)$/i, WRAP=/^(STETH|WSTETH|WBTC|CBBTC|WEETH|WETH|JITOSOL|WBETH|RETH|METH|LBTC|SOLVBTC|BSC-USD)$/i;
+const $=s=>document.querySelector(s);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function get(u){ for(let a=0;a<4;a++){ try{ const r=await fetch(u); if(r.status===429){await sleep(2000);continue} if(!r.ok) throw new Error(r.status); return await r.json(); }catch(e){ if(a===3) throw e; await sleep(800);} } }
+const price=v=>v==null||!isFinite(v)?"—":v>=1000?v.toLocaleString("ja-JP",{maximumFractionDigits:1}):v>=1?v.toFixed(4):v.toPrecision(4);
+const pct=v=>(v>=0?"+":"")+v.toFixed(2)+"%";
+// ---- 指標 ----
+function IND(d){ const n=d.length, c=d.map(b=>b[4]);
+ const rsi=new Float64Array(n).fill(NaN); {let ag=0,al=0; for(let i=1;i<n;i++){ const df=c[i]-c[i-1], g=df>0?df:0, l=df<0?-df:0; if(i<=14){ag+=g/14;al+=l/14; if(i===14) rsi[i]=100-100/(1+ag/(al||1e-12));} else {ag=(ag*13+g)/14; al=(al*13+l)/14; rsi[i]=100-100/(1+ag/(al||1e-12));} }}
+ const bbm=new Float64Array(n).fill(NaN), bbu=new Float64Array(n).fill(NaN), bbl=new Float64Array(n).fill(NaN);
+ for(let i=19;i<n;i++){ let s=0,s2=0; for(let j=i-19;j<=i;j++){s+=c[j];s2+=c[j]*c[j];} const m=s/20, sd=Math.sqrt(Math.max(0,s2/20-m*m)); bbm[i]=m; bbu[i]=m+2*sd; bbl[i]=m-2*sd; }
+ const ema=p=>{ const e=new Float64Array(n); const k=2/(p+1); e[0]=c[0]; for(let i=1;i<n;i++) e[i]=e[i-1]+k*(c[i]-e[i-1]); return e; };
+ const e12=ema(12), e26=ema(26); const macd=new Float64Array(n); for(let i=0;i<n;i++) macd[i]=e12[i]-e26[i]; const sig=new Float64Array(n); {const k=0.2; sig[0]=macd[0]; for(let i=1;i<n;i++) sig[i]=sig[i-1]+k*(macd[i]-sig[i-1]);}
+ const atr=new Float64Array(n); {let a=0; for(let i=1;i<n;i++){ const tr=Math.max(d[i][2]-d[i][3],Math.abs(d[i][2]-c[i-1]),Math.abs(d[i][3]-c[i-1])); a=i<=14?(a*(i-1)+tr)/i:(a*13+tr)/14; atr[i]=a; }}
+ return {rsi,bbm,bbu,bbl,macd,sig,atr}; }
+const bull=(d,i)=>d[i][4]>d[i][1], bear=(d,i)=>d[i][4]<d[i][1];
+const engulfUp=(d,i)=>bear(d,i-1)&&bull(d,i)&&d[i][4]>=d[i-1][1]&&d[i][1]<=d[i-1][4];
+function EXIT(d,i,ent,stop,rr,T){ const R=ent-stop, tp=ent+rr*R; const last=d.length-1; let ex=null,k,how="保有中";
+ for(k=i+1;k<=Math.min(last,i+T);k++){ if(d[k][3]<=stop){ex=Math.min(stop,d[k][1]);how="損切り";break} if(d[k][2]>=tp){ex=tp;how="利確";break} }
+ if(ex==null&&i+T<=last){ ex=d[i+T][4]; how="1週間で手仕舞い"; k=i+T; }
+ return {ex,k,how,tp}; }
+// ---- 手法①（買いの向きで計算。売りは価格を反転して同じ関数を使う）----
+function M1(d,I,{stopMode="bb",rr=2,T=168}={}){ const n=d.length, out=[]; let st=0,t0=0,B1=Infinity,bounceHi=-Infinity,B2=Infinity,iB2=-1,cntBull=0,busy=0;
+ for(let i=30;i<n;i++){ if(i<busy) continue; const A=I.atr[i];
+  if(st>0&&i-t0>48){st=0;}
+  if(st===0){ if(I.rsi[i]<=30){ st=1; t0=i; B1=Infinity; } else continue; }
+  if(st===1){ B1=Math.min(B1,d[i][3]); const touch=d[i][3]<=I.bbl[i]; const bear3=bear(d,i)&&bear(d,i-1)&&bear(d,i-2); const eng=engulfUp(d,i);
+    if(touch&&(bear3||eng)){ st=2; if(eng){ st=3; bounceHi=d[i][2]; B2=Infinity; iB2=-1; cntBull=0; } } continue; }
+  if(st===2){ B1=Math.min(B1,d[i][3]); if(engulfUp(d,i)){ st=3; bounceHi=d[i][2]; B2=Infinity; iB2=-1; cntBull=0; } continue; }
+  if(st===3){ bounceHi=Math.max(bounceHi,d[i][2]);
+    if(d[i][3]<B2){ B2=d[i][3]; iB2=i; cntBull=0;
+      if(d[i][3]<=I.bbl[i]){ B1=Math.min(B1,d[i][3]); st=2; continue; }
+      if(d[i][3]<B1-0.5*A){ st=2; B1=d[i][3]; continue; }
+      continue; }
+    if(iB2>0&&bull(d,i)){ cntBull++; if(cntBull===2){
+        if(!(B2<bounceHi)){ st=0; continue; }
+        const ent=d[i][4]; const stop=stopMode==="bb"?I.bbl[i]:B2-0.1*A; if(!(stop<ent)){ st=0; continue; }
+        const x=EXIT(d,i,ent,stop,rr,T); out.push({i,t:d[i][0],ent,stop,...x}); busy=(x.k||n)+1; st=0; } } } }
+ return {trades:out, state:{st, t0, cntBull, B2:isFinite(B2)?B2:null, since:n-1-t0}}; }
+// ---- 手法② ----
+function M2(d,I,{pk=3,rr=2,T=168}={}){ const n=d.length, out=[]; const isPL=j=>{ for(let q=1;q<=pk;q++){ if(d[j][3]>d[j-q][3]||d[j][3]>=d[j+q][3]) return false; } return true; };
+ let lastPL=[], busy=0, armed=-1, crossAt=-1, P2=-1;
+ for(let i=40;i<n;i++){
+  const j=i-pk; if(j>pk&&isPL(j)){ lastPL.push(j); if(lastPL.length>5) lastPL.shift();
+    const P=lastPL.length>=2?lastPL[lastPL.length-2]:-1; if(P>0&&j-P>=5&&j-P<=60&&d[j][3]<d[P][3]&&I.rsi[j]>I.rsi[P]&&Math.min(I.rsi[P],I.rsi[j])<=40){ armed=i; P2=j; crossAt=-1; } }
+  if(i<busy||armed<0) continue;
+  if(d[i][3]<d[P2][3]){ armed=-1; continue; }
+  if(crossAt<0){ if(i-armed>24){armed=-1;continue} if(I.macd[i]>I.sig[i]&&I.macd[i-1]<=I.sig[i-1]) crossAt=i; else continue; }
+  if(i-crossAt>12){ armed=-1; continue; }
+  if(engulfUp(d,i)){ let lo=Infinity; for(let q=Math.max(0,i-10);q<=i;q++) lo=Math.min(lo,d[q][3]); const ent=d[i][4], stop=lo-0.1*I.atr[i]; if(stop<ent){ const x=EXIT(d,i,ent,stop,rr,T); out.push({i,t:d[i][0],ent,stop,...x}); busy=(x.k||n)+1; } armed=-1; } }
+ return {trades:out, state:{armed:armed>=0, crossed:crossAt>=0, P2, since:armed>=0?n-1-armed:null}}; }
+const inv=d=>d.map(b=>[b[0],1/b[1],1/b[3],1/b[2],1/b[4],b[5]]);
+// ---- 判定 ----
+function analyze(d){ const n=d.length; const dI=inv(d); const I=IND(d), J=IND(dI); const res={};
+ const conv=(x,side)=>side===1?x:{...x,ent:1/x.ent,stop:1/x.stop,tp:1/x.tp,ex:x.ex==null?null:1/x.ex};
+ res.m1b=M1(d,I,{stopMode:"bb"}); res.m1s=M1(dI,J,{stopMode:"swing"}); res.m2b=M2(d,I); res.m2s=M2(dI,J);
+ for(const [k,side] of [["m1b",1],["m1s",-1],["m2b",1],["m2s",-1]]) res[k].trades=res[k].trades.map(x=>({...conv(x,side),ret:x.ex==null?null:(x.ex/x.ent-1)}));
+ return {I,res}; }
+const NAME={m1b:"① 買い",m1s:"① 売り",m2b:"② 買い",m2s:"② 売り"};
+const NOTE={m1b:"検証：ランダム以下",m1s:"検証：ランダムとほぼ同じ",m2b:"検証：ランダム以下",m2s:"検証：両期間でランダムを上回る（根拠は弱い）"};
+function stageText(key,r,side){ const s=r.state; const up=side===1; if(key.startsWith("m1")){
+  if(s.st===0) return null;
+  if(s.st===1) return `RSIが${up?"30以下":"70以上"}になった（${s.since}時間前）：バンドの${up?"下限":"上限"}タッチ＋${up?"陰線3本か陽線":"陽線3本か陰線"}の包み足を待っています`;
+  if(s.st===2) return `${up?"売り":"買い"}のピークを確認：1回目の${up?"陽線":"陰線"}の包み足（見送り）を待っています`;
+  if(s.st===3) return `1回目の反発済み：帯の内側で2つ目の${up?"底":"山"}→${up?"陽線":"陰線"}2本目を待っています（今${s.cntBull}本）`; }
+ else { if(!s.armed) return null; return s.crossed?`ダイバージェンス→MACDの${up?"ゴールデン":"デッド"}クロス済み：${up?"陽線":"陰線"}の包み足を待っています`:`ダイバージェンス発生（${s.since}時間前）：MACDの${up?"ゴールデン":"デッド"}クロスを待っています`; } }
+let DATA=[];
+function render(){ const only=$("#onlyHot").checked; const L=$("#list"); L.replaceChildren();
+ const rows=DATA.filter(x=>x.ok).map(x=>{ const hot=[], prog=[]; for(const k of ["m2s","m2b","m1s","m1b"]){ const r=x.res[k]; const side=k.endsWith("b")?1:-1; const last=r.trades[r.trades.length-1]; if(last&&last.i>=x.n-3&&last.how==="保有中") hot.push({k,side,tr:last}); const st=stageText(k,r,side); if(st) prog.push({k,side,st}); } return {...x,hot,prog}; })
+  .sort((a,b)=>(b.hot.length-a.hot.length)||(b.hot.some(h=>h.k==="m2s")-a.hot.some(h=>h.k==="m2s"))||(b.prog.length-a.prog.length)||a.rank-b.rank);
+ let shown=0;
+ for(const x of rows){ if(only&&!x.hot.length&&!x.prog.length) continue; shown++;
+  const c=document.createElement("div"); c.className="card"+(x.hot.length?" hot":"");
+  const I=x.I, n=x.n-1; const bbPos=(x.close-I.bbl[n])/((I.bbu[n]-I.bbl[n])||1);
+  let h=`<div class="row"><span class="sym"><a href="https://www.gate.com/futures/USDT/${x.ct}" target="_blank" rel="noopener">${x.sym}</a></span><span class="meta">時価総額${x.rank}位</span><span class="px">${price(x.last)}<br><span class="${x.ch24>=0?"up":"down"}">${pct(x.ch24)}</span> <span class="meta">24h</span></span></div>`;
+  h+=`<div class="nums"><div><span>RSI(14)</span> <b class="${I.rsi[n]<=30?"up":I.rsi[n]>=70?"down":""}">${I.rsi[n].toFixed(0)}</b></div><div><span>帯の中の位置（下限0%・上限100%）</span> ${(bbPos*100).toFixed(0)}%</div><div><span>MACD</span> ${I.macd[n]>I.sig[n]?"シグナルより上":"シグナルより下"}</div></div>`;
+  for(const hh of x.hot){ const t=hh.tr; h+=`<div class="st go"><b>${NAME[hh.k]}が点灯</b>（${x.n-1-t.i===0?"最新":(x.n-1-t.i)+"本前"}の確定足の終値 ${price(t.ent)}）損切り <b>${price(t.stop)}</b>／利確 <b>${price(t.tp)}</b>（損切り幅の2倍）／最長1週間<br><span class="meta">${NOTE[hh.k]}</span></div>`; }
+  for(const p of x.prog) if(!x.hot.some(hh=>hh.k===p.k)) h+=`<div class="st">進行中 ${NAME[p.k]}：${p.st}<br><span class="meta">${NOTE[p.k]}</span></div>`;
+  if(!x.hot.length&&!x.prog.length) h+=`<div class="meta">RSIが偏っておらず、どの手法も待機中（動画の考え方では「手を出さない」場面）</div>`;
+  const past=[]; for(const k of ["m1b","m1s","m2b","m2s"]) for(const t of x.res[k].trades) past.push({k,t}); past.sort((a,b)=>b.t.t-a.t.t);
+  if(past.length){ h+=`<details><summary>直近の点灯と結果（${past.length}件・約40日分）</summary><div class="tw" style="margin-top:6px"><table><tr><th>日時</th><th>手法</th><th>入った値</th><th>結果</th><th>損益</th></tr>`+
+    past.slice(0,12).map(({k,t})=>{ const r=t.ret==null?null:(k.endsWith("s")?(t.ent/t.ex-1):(t.ex/t.ent-1))-0.0012; return `<tr><td>${new Date(t.t*1000).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}</td><td>${NAME[k]}</td><td>${price(t.ent)}</td><td>${t.how}</td><td class="${r==null?"":r>=0?"up":"down"}">${r==null?"—":pct(r*100)}</td></tr>`; }).join("")+`</table></div></details>`; }
+  c.innerHTML=h; L.appendChild(c); }
+ if(!shown) L.innerHTML=`<div class="empty">今は点灯・進行中の銘柄がありません</div>`; }
+async function topList(){ try{ const j=await get("https://api.coinpaprika.com/v1/tickers?limit=80"); const out=[]; for(const c of j){ const s=String(c.symbol).toUpperCase(); if(!/^[A-Z0-9]{2,12}$/.test(s)) continue; if(STABLE.test(s)||WRAP.test(s)) continue; out.push({sym:s,rank:c.rank}); } return out; }catch(e){ return FALLBACK.map((s,i)=>({sym:s,rank:i+1})); } }
+async function run(){ const btn=$("#reload"); btn.disabled=true; $("#progTxt").textContent="銘柄リストを取得中"; $("#bar").style.width="5%";
+ try{ const [tl,fc,tk]=await Promise.all([topList(),get(API+"/futures/usdt/contracts"),get(API+"/futures/usdt/tickers")]);
+  const has=new Set(fc.filter(c=>!c.in_delisting).map(c=>c.name)); const tmap=new Map(tk.map(t=>[t.contract,t]));
+  const coins=[]; let r=0; for(const c of tl){ if(has.has(c.sym+"_USDT")){ r++; coins.push({...c,rank:r,ct:c.sym+"_USDT"}); if(coins.length>=20) break; } }
+  DATA=[]; let done=0;
+  for(const c of coins){ try{ const j=await get(`${API}/futures/usdt/candlesticks?contract=${c.ct}&interval=1h&limit=1000`); let d=j.map(b=>[+b.t,+b.o,+b.h,+b.l,+b.c,+(b.sum||0)]).sort((a,b)=>a[0]-b[0]);
+    const nowH=Math.floor(Date.now()/3600000)*3600; d=d.filter(b=>b[0]<nowH); // 確定した足だけ
+    const {I,res}=analyze(d); const t=tmap.get(c.ct); DATA.push({...c,ok:d.length>200,n:d.length,close:d[d.length-1][4],I,res,last:t?+t.last:d[d.length-1][4],ch24:t?+t.change_percentage:0}); }
+   catch(e){ DATA.push({...c,ok:false}); }
+   done++; $("#bar").style.width=(5+95*done/coins.length)+"%"; $("#progTxt").textContent=`1時間足を取得中 ${done}/${coins.length}`; await sleep(60); }
+  $("#progTxt").textContent=""; $("#meta").textContent=`更新: ${new Date().toLocaleString("ja-JP")} ／ ${DATA.filter(x=>x.ok).length}銘柄 ／ 次の自動更新は1時間ごと（ページを開いている間）`;
+  render(); }
+ catch(e){ $("#progTxt").textContent="取得エラー："+e.message+"（少し待ってから再読み込みしてください）"; }
+ btn.disabled=false; }
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{ document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b)); ["sig","bt","help"].forEach(t=>$("#p-"+t).hidden=t!==b.dataset.t); });
+$("#reload").onclick=run; $("#onlyHot").onchange=render;
+run(); setInterval(run,3600*1000);
+</script>
+</body>
+</html>
